@@ -1,13 +1,18 @@
 package madstodolist.service;
 
 import madstodolist.dto.UsuarioData;
+import madstodolist.model.Usuario;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 @Sql(scripts = "/clean-db.sql")
@@ -152,5 +157,18 @@ public class UsuarioServiceTest {
         assertThat(usuario.getId()).isEqualTo(usuarioId);
         assertThat(usuario.getEmail()).isEqualTo("user@ua");
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
+    }
+
+    @Test
+    public void servicioListarUsuarios(){
+
+        //Inicializamos los datos de prueba en la BD
+        addUsuarioBD();
+
+        //Obtenemos todos los usuarios de la BD llamando al método que estamos testeando
+        List<UsuarioData> usuarios = usuarioService.allUsuarios();
+
+        //Verificamos que la lista contiene el número de usuarios correctos
+        assertThat(usuarios.size()).isEqualTo(1);
     }
 }
