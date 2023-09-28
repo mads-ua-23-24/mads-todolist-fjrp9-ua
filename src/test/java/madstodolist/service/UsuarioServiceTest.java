@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Sql(scripts = "/clean-db.sql")
 public class UsuarioServiceTest {
@@ -152,5 +153,18 @@ public class UsuarioServiceTest {
         assertThat(usuario.getId()).isEqualTo(usuarioId);
         assertThat(usuario.getEmail()).isEqualTo("user@ua");
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
+    }
+
+    @Test
+    public void servicioListarUsuarios(){
+
+        //Inicializamos los datos de prueba en la BD
+        addUsuarioBD();
+
+        //Obtenemos todos los usuarios de la BD llamando al método que estamos testeando
+        List<UsuarioData> usuarios = usuarioService.allUsuarios();
+
+        //Verificamos que la lista contiene el número de usuarios correctos
+        assertThat(usuarios.size()).isEqualTo(1);
     }
 }
