@@ -9,8 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -92,5 +96,22 @@ public class UsuarioWebTest {
                         .param("eMail","ana.garcia@gmail.com")
                         .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
+    }
+
+    @Test
+    public void servicioListadoUsuarios() throws Exception {
+
+        UsuarioData user = new UsuarioData();
+        user.setEmail("user@ua");
+        user.setId(1L);
+
+        List<UsuarioData> usuarios = new ArrayList<>();
+        usuarios.add(user);
+
+        //Moqueamos el método allUsuarios para que devuelva una lista de usuarios
+        when(usuarioService.allUsuarios()).thenReturn(usuarios);
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(content().string(containsString("user@ua")));
     }
 }
