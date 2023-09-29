@@ -3,14 +3,14 @@
 
 <head th:replace="fragments :: head (titulo='Barra de menú')"></head>
 <body>
-<nav th:fragment="navbar" class="navbar navbar-expand-md bg-dark navbar-dark">
+<nav th:fragment="navbar (usuario)" class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
             <li><a class="nav-link" th:href="@{/about}">ToDoList</a></li>
 
             <li><a class="nav-link" th:href="@{/}">Tareas</a></li>
 
-            <li><a class="nav-link">nombre de usuario</a></li>
+            <li><a class="nav-link" th:text="${usuario.nombre}"></a></li>
         </ul>
     </div>
 </nav>
