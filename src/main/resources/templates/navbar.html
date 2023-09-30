@@ -3,14 +3,31 @@
 
 <head th:replace="fragments :: head (titulo='Barra de menú')"></head>
 <body>
-<nav th:fragment="navbar (usuario)" class="navbar navbar-expand-md bg-dark navbar-dark">
-    <div class="container-fluid">
+<nav th:fragment="navbar (usuario, logeado)" class="navbar navbar-expand-md bg-dark navbar-dark">
+    <div th:if="${logeado}" class="container-fluid">
         <ul class="nav navbar-nav">
             <li><a class="nav-link" th:href="@{/about}">ToDoList</a></li>
 
-            <li><a class="nav-link" th:href="@{/}">Tareas</a></li>
+            <li><a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Tareas</a></li>
 
-            <li><a class="nav-link" th:text="${usuario.nombre}"></a></li>
+            <!--<li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${usuario.nombre}"></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>-->
+
+        </ul>
+    </div>
+
+    <div th:unless="${logeado}" class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a class="nav-link" th:href="@{/login}">Login</a></li>
+
+            <li><a class="nav-link" th:href="@{/registro}">Registro</a></li>
         </ul>
     </div>
 </nav>

@@ -4,10 +4,10 @@
 <head th:replace="fragments :: head (titulo='Acerca de')"></head>
 
 <body>
+    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado})"></nav>
 
-<div th:insert="navbar :: navbar">  </div>
+    <!--<label th:if="${logeado == false}">Hola</label>-->
 
-<div class="container-fluid">
     <div class="container-fluid">
         <h1>ToDoList</h1>
         <ul>
