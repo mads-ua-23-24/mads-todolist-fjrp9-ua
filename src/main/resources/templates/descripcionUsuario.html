@@ -10,6 +10,22 @@
             <h2 th:text="'Descripción de ' + ${usuarioDescrito.nombre}"></h2>
         </div>
     </div>
+
+    <div class="">
+        <dl class="row rounded d-inline-flex p-2">
+            <dt class="col-sm-3">ID:</dt>
+            <dd class="col-sm-9" th:text="${usuarioDescrito.id}"></dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9" th:text="${usuarioDescrito.email}">Etiam porta sem malesuada magna mollis euismod.</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9" th:text="${usuarioDescrito.nombre}"></dd>
+
+            <dt class="col-sm-3">Fecha de nacimineto:</dt>
+            <dd class="col-sm-9" th:text="${#dates.format(usuarioDescrito.fechaNacimiento, 'dd/MM/yyyy')}"></dd>
+        </dl>
+    </div>
 </div>
 </body>
 
