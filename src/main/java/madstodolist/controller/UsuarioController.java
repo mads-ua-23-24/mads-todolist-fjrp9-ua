@@ -42,6 +42,7 @@ public class UsuarioController {
     public String descripcionUsuario(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session){
 
         //Todavía queda terminarlo
+        model.addAttribute("usuarioDescrito", usuarioService.findById(idUsuario));
 
         if(managerUserSession.usuarioLogeado() == null){
             model.addAttribute("logeado",false);
