@@ -4,7 +4,8 @@
 <head th:replace="fragments :: head (titulo='Acerca de')"></head>
 
 <body>
-<div class="container-fluid">
+    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado})"></nav>
+
     <div class="container-fluid">
         <h1>ToDoList</h1>
         <ul>
