@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -113,5 +115,24 @@ public class UsuarioWebTest {
 
         this.mockMvc.perform(get("/registrados"))
                 .andExpect(content().string(containsString("user@ua")));
+    }
+
+    @Test
+    public void comprobarDatosUsuariosDescripcion() throws Exception {
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(usuarioService.findById(anaGarcia.getId()))
+                .thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
+
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(content().string(
+                        allOf(containsString("Ana García"),
+                                containsString("ana.garcia@gmail.com"))));
     }
 }
