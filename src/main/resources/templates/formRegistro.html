@@ -39,7 +39,7 @@
                                    placeholder="01-12-2019" th:field="*{fechaNacimiento}"/>
                         </div>
 
-                        <div class="form-check">
+                        <div class="form-check" th:if="${existeAdmin}">
                             <input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkAdmin">
                             <label class="form-check-label" for="exampleCheck1">Administrador</label>
                         </div>
