@@ -88,7 +88,7 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public boolean existeAdmin() {
 
-        int numAdmin = usuarioRepository.countUsuariosNoAdministradores();
+        int numAdmin = usuarioRepository.countUsuariosAdministradores();
         if (numAdmin == 1){
             return true;
         }else{
