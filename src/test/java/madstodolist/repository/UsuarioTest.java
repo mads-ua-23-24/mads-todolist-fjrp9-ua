@@ -171,4 +171,45 @@ public class UsuarioTest {
 
         assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
+
+    @Test
+    @Transactional
+    public void comprobarNoHayAdministrador(){
+        // GIVEN
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // comprobamos el número de administradores que hay,
+
+        int numAdmin = usuarioRepository.countUsuariosAdministradores();
+
+        // THEN
+        // verificamos que no hay ninguno.
+
+        assertThat(numAdmin).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void comprobarHayAdministrador(){
+        // GIVEN
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setEsAdministrador(true);
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // comprobamos el número de administradores que hay,
+
+        int numAdmin = usuarioRepository.countUsuariosAdministradores();
+
+        // THEN
+        // verificamos que hay un administrador.
+
+        assertThat(numAdmin).isEqualTo(1);
+    }
 }

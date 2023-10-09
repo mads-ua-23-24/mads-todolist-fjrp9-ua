@@ -12,6 +12,8 @@ public class UsuarioData {
     private String password;
     private Date fechaNacimiento;
 
+    private boolean esAdministrador;
+
     // Getters y setters
 
     public Long getId() {
@@ -48,6 +50,14 @@ public class UsuarioData {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public boolean getEsAdministrador() {
+        return esAdministrador;
+    }
+
+    public void setEsAdministrador(boolean esAdministrador) {
+        this.esAdministrador = esAdministrador;
     }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales

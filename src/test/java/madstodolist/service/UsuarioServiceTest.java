@@ -28,6 +28,15 @@ public class UsuarioServiceTest {
         return nuevoUsuario.getId();
     }
 
+    void addAdministradorBD(){
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setEsAdministrador(true);
+        usuarioService.registrar(usuario);
+    }
+
     @Test
     public void servicioLoginUsuario() {
         // GIVEN
@@ -166,5 +175,41 @@ public class UsuarioServiceTest {
 
         //Verificamos que la lista contiene el número de usuarios correctos
         assertThat(usuarios.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void servicioExisteAdmin(){
+        // GIVEN
+        // Un usuario administrador en la BD
+
+        addAdministradorBD();
+
+        // WHEN
+        // comprobamos si existe algun administrador,
+
+        boolean existeAdmin = usuarioService.existeAdmin();
+
+        // THEN
+        // verificamos que existe.
+
+        assertThat(existeAdmin).isEqualTo(true);
+    }
+
+    @Test
+    public void servicioNoExisteAdmin(){
+        // GIVEN
+        // Un usuario administrador en la BD
+
+        addUsuarioBD();
+
+        // WHEN
+        // comprobamos si existe algun administrador,
+
+        boolean existeAdmin = usuarioService.existeAdmin();
+
+        // THEN
+        // verificamos que no existe.
+
+        assertThat(existeAdmin).isEqualTo(false);
     }
 }

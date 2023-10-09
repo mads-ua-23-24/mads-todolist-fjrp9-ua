@@ -84,4 +84,15 @@ public class UsuarioService {
                 .collect(Collectors.toList());
         return usuariosData;
     }
+
+    @Transactional(readOnly = true)
+    public boolean existeAdmin() {
+
+        int numAdmin = usuarioRepository.countUsuariosAdministradores();
+        if (numAdmin == 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
