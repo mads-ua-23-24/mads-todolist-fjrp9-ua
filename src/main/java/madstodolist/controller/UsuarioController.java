@@ -55,16 +55,14 @@ public class UsuarioController {
     @GetMapping("/registrados/{id}")
     public String descripcionUsuario(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session){
 
+        comprobarUsuarioAdministrador(managerUserSession.usuarioLogeado());
+
         model.addAttribute("usuarioDescrito", usuarioService.findById(idUsuario));
 
-        if(managerUserSession.usuarioLogeado() == null){
-            model.addAttribute("logeado",false);
-            model.addAttribute("usuario", null);
-        }else{
-            model.addAttribute("logeado", true);
-            UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
-            model.addAttribute("usuario", usuario);
-        }
+        model.addAttribute("logeado", true);
+        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        model.addAttribute("usuario", usuario);
+
         return "descripcionUsuario";
     }
 }

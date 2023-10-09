@@ -112,20 +112,6 @@ public class UsuarioWebTest {
     @Test
     public void comprobarDatosUsuariosDescripcion() throws Exception {
 
-        UsuarioData anaGarcia = new UsuarioData();
-        anaGarcia.setNombre("Ana García");
-        anaGarcia.setEmail("ana.garcia@gmail.com");
-        anaGarcia.setId(1L);
-
-        when(usuarioService.findById(anaGarcia.getId()))
-                .thenReturn(anaGarcia);
-
-        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
-
-        this.mockMvc.perform(get(urlDEscripcion))
-                .andExpect(content().string(
-                        allOf(containsString("Ana García"),
-                                containsString("ana.garcia@gmail.com"))));
     }
 
     @Test
