@@ -34,8 +34,6 @@ public class UsuarioController {
         }else{
             throw new UsuarioNoAdministradorException();
         }
-
-
     }
 
     @GetMapping("/registrados")

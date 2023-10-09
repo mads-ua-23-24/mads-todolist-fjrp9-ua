@@ -28,13 +28,14 @@ public class UsuarioServiceTest {
         return nuevoUsuario.getId();
     }
 
-    void addAdministradorBD(){
+    Long addAdministradorBD(){
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setPassword("123");
         usuario.setEsAdministrador(true);
-        usuarioService.registrar(usuario);
+        UsuarioData nuevoUsuario = usuarioService.registrar(usuario);
+        return nuevoUsuario.getId();
     }
 
     @Test
@@ -211,5 +212,41 @@ public class UsuarioServiceTest {
         // verificamos que no existe.
 
         assertThat(existeAdmin).isEqualTo(false);
+    }
+
+    @Test
+    public void servicioNoEsAdmin(){
+        // GIVEN
+        // Un usuario administrador en la BD
+
+        Long idUser = addUsuarioBD();
+
+        // WHEN
+        // comprobamos si es administrador,
+
+        boolean esAdmin = usuarioService.esAdmin(idUser);
+
+        // THEN
+        // verificamos que no es admin.
+
+        assertThat(esAdmin).isEqualTo(false);
+    }
+
+    @Test
+    public void servicioEsAdmin(){
+        // GIVEN
+        // Un usuario administrador en la BD
+
+        Long idUser = addAdministradorBD();
+
+        // WHEN
+        // comprobamos si es administrador,
+
+        boolean esAdmin = usuarioService.esAdmin(idUser);
+
+        // THEN
+        // verificamos que no es admin.
+
+        assertThat(esAdmin).isEqualTo(true);
     }
 }
