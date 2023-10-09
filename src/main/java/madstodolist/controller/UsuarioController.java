@@ -46,7 +46,7 @@ public class UsuarioController {
 
         model.addAttribute("logeado", true);
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
-        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioPrincipal", usuario);
         return "listaUsuarios";
     }
 
