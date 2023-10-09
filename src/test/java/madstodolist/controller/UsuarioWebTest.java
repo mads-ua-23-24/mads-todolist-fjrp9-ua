@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -134,5 +135,66 @@ public class UsuarioWebTest {
                 .andExpect(content().string(
                         allOf(containsString("Ana García"),
                                 containsString("ana.garcia@gmail.com"))));
+    }
+
+    @Test
+    public void servicioExisteAdminRedirectARegistradosEnLogin() throws Exception {
+        // GIVEN
+        // Moqueamos la llamada a usuarioService.findByEmail para que
+        // devuelva un LOGIN_OK y la llamada a usuarioServicie.findByEmail
+        // para que devuelva un usuario determinado.
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setId(1L);
+        anaGarcia.setEsAdministrador(true);
+
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición POST al login pasando los datos
+        // esperados en el mock, la petición devolverá una redirección a la
+        // URL con las registrados
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+    }
+
+    @Test
+    public void servicioExisteAdminMuestraCheckBoxAdmin() throws Exception {
+        // GIVEN
+        // Moqueamos la llamada a usuarioService.existeAdmin para que
+        // devuelva false en la existencia de un admin
+
+        when(usuarioService.existeAdmin()).thenReturn(false)
+;
+        // WHEN, THEN
+        // Realizamos una petición get al registro
+        // esperando que se muestre el check box Administrador
+
+        this.mockMvc.perform(get("/registro"))
+                .andExpect(content().string(containsString("Administrador")));
+    }
+
+    @Test
+    public void servicioExisteAdminNoMuestraCheckBoxAdmin() throws Exception {
+        // GIVEN
+        // Moqueamos la llamada a usuarioService.existeAdmin para que
+        // devuelva false en la existencia de un admin
+
+        when(usuarioService.existeAdmin()).thenReturn(true)
+        ;
+        // WHEN, THEN
+        // Realizamos una petición get al registro
+        // esperando que se muestre el check box Administrador
+
+        this.mockMvc.perform(get("/registro"))
+                .andExpect(content().string(not(containsString("Administrador"))));
     }
 }
