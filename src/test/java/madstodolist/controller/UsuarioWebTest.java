@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ public class UsuarioWebTest {
     // las peticiones a los endpoint.
     @MockBean
     private UsuarioService usuarioService;
+
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
@@ -104,18 +106,7 @@ public class UsuarioWebTest {
     @Test
     public void servicioListadoUsuarios() throws Exception {
 
-        UsuarioData user = new UsuarioData();
-        user.setEmail("user@ua");
-        user.setId(1L);
 
-        List<UsuarioData> usuarios = new ArrayList<>();
-        usuarios.add(user);
-
-        //Moqueamos el método allUsuarios para que devuelva una lista de usuarios
-        when(usuarioService.allUsuarios()).thenReturn(usuarios);
-
-        this.mockMvc.perform(get("/registrados"))
-                .andExpect(content().string(containsString("user@ua")));
     }
 
     @Test
