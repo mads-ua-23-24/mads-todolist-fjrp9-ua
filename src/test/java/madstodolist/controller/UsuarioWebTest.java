@@ -211,6 +211,38 @@ public class UsuarioWebTest {
     }
 
     @Test
+    public void servicioListadoUsuariosNoSaltaExcepcion() throws Exception {
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isOk());;
+    }
+
+    @Test
+    public void servicioDatosUsuariosDescripcionNoSaltaExcepcion() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void servicioListadoUsuariosSaltaExcepcion() throws Exception {
 
         UsuarioData anaGarcia = new UsuarioData();
