@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,10 @@ public class UsuarioWebTest {
     // las peticiones a los endpoint.
     @MockBean
     private UsuarioService usuarioService;
+
+    @MockBean
+    private ManagerUserSession managerUserSession;
+
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
@@ -104,33 +109,40 @@ public class UsuarioWebTest {
     @Test
     public void servicioListadoUsuarios() throws Exception {
 
-        UsuarioData user = new UsuarioData();
-        user.setEmail("user@ua");
-        user.setId(1L);
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+        anaGarcia.setEsAdministrador(true);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
 
         List<UsuarioData> usuarios = new ArrayList<>();
-        usuarios.add(user);
+        usuarios.add(anaGarcia);
 
-        //Moqueamos el método allUsuarios para que devuelva una lista de usuarios
         when(usuarioService.allUsuarios()).thenReturn(usuarios);
 
         this.mockMvc.perform(get("/registrados"))
-                .andExpect(content().string(containsString("user@ua")));
+                .andExpect(status().isOk()) // Esperamos que la respuesta tenga un estado HTTP 200 OK
+                .andExpect(view().name("listaUsuarios"))
+                .andExpect(content().string(containsString("ana.garcia@gmail.com")));
     }
 
     @Test
     public void comprobarDatosUsuariosDescripcion() throws Exception {
-
         UsuarioData anaGarcia = new UsuarioData();
         anaGarcia.setNombre("Ana García");
         anaGarcia.setEmail("ana.garcia@gmail.com");
         anaGarcia.setId(1L);
 
-        when(usuarioService.findById(anaGarcia.getId()))
-                .thenReturn(anaGarcia);
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
 
         String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
-
         this.mockMvc.perform(get(urlDEscripcion))
                 .andExpect(content().string(
                         allOf(containsString("Ana García"),
@@ -196,5 +208,67 @@ public class UsuarioWebTest {
 
         this.mockMvc.perform(get("/registro"))
                 .andExpect(content().string(not(containsString("Administrador"))));
+    }
+
+    @Test
+    public void servicioListadoUsuariosNoSaltaExcepcion() throws Exception {
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isOk());;
+    }
+
+    @Test
+    public void servicioDatosUsuariosDescripcionNoSaltaExcepcion() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void servicioListadoUsuariosSaltaExcepcion() throws Exception {
+
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(false);
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isUnauthorized());;
+    }
+
+    @Test
+    public void servicioDatosUsuariosDescripcionSaltaExcepcion() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(false);
+
+        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(status().isUnauthorized());
     }
 }

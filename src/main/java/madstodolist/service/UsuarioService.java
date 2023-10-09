@@ -95,4 +95,15 @@ public class UsuarioService {
             return false;
         }
     }
+
+    @Transactional(readOnly = true)
+    public boolean esAdmin(Long usuarioId){
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        if (usuario == null) return false;
+        if(usuario.getEsAdministrador()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
