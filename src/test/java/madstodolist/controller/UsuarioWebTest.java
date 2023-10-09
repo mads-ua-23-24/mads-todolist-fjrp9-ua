@@ -40,6 +40,9 @@ public class UsuarioWebTest {
     @MockBean
     private UsuarioService usuarioService;
 
+    @MockBean
+    private ManagerUserSession managerUserSession;
+
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
@@ -106,12 +109,44 @@ public class UsuarioWebTest {
     @Test
     public void servicioListadoUsuarios() throws Exception {
 
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+        anaGarcia.setEsAdministrador(true);
 
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+
+        List<UsuarioData> usuarios = new ArrayList<>();
+        usuarios.add(anaGarcia);
+
+        when(usuarioService.allUsuarios()).thenReturn(usuarios);
+
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isOk()) // Esperamos que la respuesta tenga un estado HTTP 200 OK
+                .andExpect(view().name("listaUsuarios"))
+                .andExpect(content().string(containsString("ana.garcia@gmail.com")));
     }
 
     @Test
     public void comprobarDatosUsuariosDescripcion() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
 
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(content().string(
+                        allOf(containsString("Ana García"),
+                                containsString("ana.garcia@gmail.com"))));
     }
 
     @Test
