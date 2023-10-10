@@ -116,4 +116,15 @@ public class UsuarioService {
     public void desbloquearUsuario(Long usuarioId){
         usuarioRepository.updateUsuarioBloqueo(false, usuarioId);
     }
+
+    @Transactional(readOnly = true)
+    public boolean estaBloqueado(Long usuarioId){
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        if (usuario == null) return false;
+        if(usuario.getEstaBloqueado()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
