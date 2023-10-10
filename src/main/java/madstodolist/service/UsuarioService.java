@@ -106,4 +106,14 @@ public class UsuarioService {
             return false;
         }
     }
+
+    @Transactional
+    public void bloquearUsuario(Long usuarioId){
+        usuarioRepository.updateUsuarioBloqueo(true, usuarioId);
+    }
+
+    @Transactional
+    public void desbloquearUsuario(Long usuarioId){
+        usuarioRepository.updateUsuarioBloqueo(false, usuarioId);
+    }
 }
