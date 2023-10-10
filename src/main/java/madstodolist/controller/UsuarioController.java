@@ -72,7 +72,6 @@ public class UsuarioController {
     public String bloqueaUsuario(@PathVariable(value="id") Long idUsuario, Model model, RedirectAttributes flash, HttpSession session) {
         usuarioService.bloquearUsuario(idUsuario);
 
-        flash.addFlashAttribute("mensaje", "Usuario bloqueado correctamente");
         return "redirect:/registrados";
     }
 
@@ -80,7 +79,6 @@ public class UsuarioController {
     public String desbloqueaUsuario(@PathVariable(value="id") Long idUsuario, Model model, RedirectAttributes flash, HttpSession session) {
         usuarioService.desbloquearUsuario(idUsuario);
 
-        flash.addFlashAttribute("mensaje", "Usuario desbloqueado correctamente");
         return "redirect:/registrados";
     }
 }
