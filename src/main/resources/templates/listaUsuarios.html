@@ -30,15 +30,16 @@
                         <td th:text="${usuario.email}"></td>
                         <td><a th:href="@{/registrados/{id} (id=${usuario.id})}">Más info.</a></td>
                         <div th:if="${usuario.id != usuarioPrincipal.id}">
-                            <td th:if="${usuario.estaBloqueado}">
+                            <td th:if="${usuario.estaBloqueado}" class="d-flex align-items-center">
                                 <form method="post" th:action="@{/usuarios/{id}/desbloquear(id=${usuario.id})}">
                                     <button type="submit" class="btn btn-success">Desbloquear</button>
-                                    <button class="btn btn-outline-danger">Bloquear</button>
+                                    <button type="button" class="btn btn-outline-danger">Bloquear</button>
                                 </form>
+
                             </td>
-                            <td th:unless="${usuario.estaBloqueado}">
+                            <td th:unless="${usuario.estaBloqueado}" class="d-flex align-items-center">
                                 <form method="post" th:action="@{/usuarios/{id}/bloquear(id=${usuario.id})}">
-                                    <button class="btn btn-outline-success">Desbloquear</button>
+                                    <button type="button" class="btn btn-outline-success">Desbloquear</button>
                                     <button type="submit" class="btn btn-danger">Bloquear</button>
                                 </form>
                             </td>
