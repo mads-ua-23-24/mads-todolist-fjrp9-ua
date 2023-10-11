@@ -108,15 +108,25 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void bloquearUsuario(Long usuarioId){
+    public boolean bloquearUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
         usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail());
+        if(estaBloqueado(usuario.getEmail())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Transactional
-    public void desbloquearUsuario(Long usuarioId){
+    public boolean desbloquearUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
         usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail());
+        if(!estaBloqueado(usuario.getEmail())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Transactional(readOnly = true)

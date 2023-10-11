@@ -273,4 +273,22 @@ public class UsuarioWebTest {
         this.mockMvc.perform(get(urlDEscripcion))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    public void servicioBloquearUsuario() throws Exception {
+        /*UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        when(usuarioService.bloquearUsuario(anaGarcia.getId())).thenReturn(true);
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/usuarios/" + anaGarcia.getId().toString() + "/bloquear";
+        this.mockMvc.perform(get(urlDEscripcion))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));*/
+    }
 }
