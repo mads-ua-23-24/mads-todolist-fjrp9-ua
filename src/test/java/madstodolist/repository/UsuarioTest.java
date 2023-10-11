@@ -213,16 +213,4 @@ public class UsuarioTest {
 
         assertThat(numAdmin).isEqualTo(1);
     }
-
-    @Test
-    @Transactional
-    public void comprobarSeModificaCorrectamenteUsuarioABloqueado(){
-
-    }
-
-    @Test
-    @Transactional
-    public void comprobarSeModificaCorrectamenteUsuarioADesbloqueado(){
-
-    }
 }
