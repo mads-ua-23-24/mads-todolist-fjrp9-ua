@@ -109,12 +109,14 @@ public class UsuarioService {
 
     @Transactional
     public void bloquearUsuario(Long usuarioId){
-        usuarioRepository.updateUsuarioBloqueo(true, usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail());
     }
 
     @Transactional
     public void desbloquearUsuario(Long usuarioId){
-        usuarioRepository.updateUsuarioBloqueo(false, usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail());
     }
 
     @Transactional(readOnly = true)

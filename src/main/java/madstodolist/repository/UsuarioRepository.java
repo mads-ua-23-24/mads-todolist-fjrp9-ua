@@ -14,6 +14,6 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
     int countUsuariosAdministradores();
 
     @Modifying
-    @Query("UPDATE Usuario u SET u.estaBloqueado = ?1 WHERE u.id = ?2 ")
-    void updateUsuarioBloqueo(boolean bloqueado, Long idUsuario);
+    @Query("UPDATE Usuario u SET u.estaBloqueado = ?1 WHERE u.email = ?2 ")
+    void updateUsuarioBloqueo(boolean bloqueado, String emailUsuario);
 }
