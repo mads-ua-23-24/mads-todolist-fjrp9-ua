@@ -39,7 +39,7 @@ public class LoginController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute LoginData loginData, Model model, HttpSession session) {
 
-        if(!usuarioService.estaBloqueado(usuarioService.findByEmail(loginData.geteMail()).getId())){
+        if(!usuarioService.estaBloqueado(loginData.geteMail())){
             // Llamada al servicio para comprobar si el login es correcto
             UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 

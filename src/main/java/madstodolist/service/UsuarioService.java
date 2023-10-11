@@ -118,8 +118,8 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public boolean estaBloqueado(Long usuarioId){
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+    public boolean estaBloqueado(String emailUsuario){
+        Usuario usuario = usuarioRepository.findByEmail(emailUsuario).orElse(null);
         if (usuario == null) return false;
         if(usuario.getEstaBloqueado()){
             return true;

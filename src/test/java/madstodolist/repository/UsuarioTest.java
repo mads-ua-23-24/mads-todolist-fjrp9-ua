@@ -1,5 +1,6 @@
 package madstodolist.repository;
 
+import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,5 +212,17 @@ public class UsuarioTest {
         // verificamos que hay un administrador.
 
         assertThat(numAdmin).isEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void comprobarSeModificaCorrectamenteUsuarioABloqueado(){
+
+    }
+
+    @Test
+    @Transactional
+    public void comprobarSeModificaCorrectamenteUsuarioADesbloqueado(){
+
     }
 }

@@ -77,6 +77,7 @@ public class UsuarioWebTest {
         // GIVEN
         // Moqueamos el método usuarioService.login para que devuelva
         // USER_NOT_FOUND
+        when(usuarioService.estaBloqueado("pepito.perez@gmail.com")).thenReturn(false);
         when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
                 .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
 
@@ -94,6 +95,7 @@ public class UsuarioWebTest {
         // GIVEN
         // Moqueamos el método usuarioService.login para que devuelva
         // ERROR_PASSWORD
+        when(usuarioService.estaBloqueado("ana.garcia@gmail.com")).thenReturn(false);
         when(usuarioService.login("ana.garcia@gmail.com", "000"))
                 .thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
 
