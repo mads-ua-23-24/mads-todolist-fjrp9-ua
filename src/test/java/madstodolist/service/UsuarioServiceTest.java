@@ -28,6 +28,16 @@ public class UsuarioServiceTest {
         return nuevoUsuario.getId();
     }
 
+    Long addUsuarioBloqueadoBD() {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setEstaBloqueado(true);
+        UsuarioData nuevoUsuario = usuarioService.registrar(usuario);
+        return nuevoUsuario.getId();
+    }
+
     Long addAdministradorBD(){
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
@@ -99,7 +109,6 @@ public class UsuarioServiceTest {
             usuarioService.registrar(usuario);
         });
     }
-
 
     @Test
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
@@ -248,5 +257,73 @@ public class UsuarioServiceTest {
         // verificamos que no es admin.
 
         assertThat(esAdmin).isEqualTo(true);
+    }
+
+    @Test
+    public void servicioBloquearUsuario(){
+        // GIVEN
+        // Un usuario no bloqueado
+        Long idUser = addUsuarioBD();
+
+        // WHEN
+        // bloqueamos al usuario,
+
+        usuarioService.bloquearUsuario(idUser);
+
+        // THEN
+        // verificamos que se ha bloqueado al usuario.
+        UsuarioData usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getEstaBloqueado()).isTrue();
+    }
+
+    @Test
+    public void servicioNoBloquearUsuario(){
+        // GIVEN
+        // Un usuario no bloqueado
+        Long idUser = addUsuarioBloqueadoBD();
+
+        // WHEN
+        // desbloqueamos al usuario,
+
+        usuarioService.desbloquearUsuario(idUser);
+
+        // THEN
+        // verificamos que se ha desbloqueado al usuario.
+        UsuarioData usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getEstaBloqueado()).isFalse();
+    }
+
+    @Test
+    public void servicioComprobarSiUsuarioNoBloqueado(){
+        // GIVEN
+        // Un usuario no bloqueado
+        Long idUser = addUsuarioBD();
+        UsuarioData usuario = usuarioService.findById(idUser);
+
+        // WHEN
+        // comprobamos si el usuario está bloqueado,
+
+        boolean bloqueado = usuarioService.estaBloqueado(usuario.getEmail());
+
+        // THEN
+        // verificamos que está desbloqueado usuario.
+        assertThat(bloqueado).isFalse();
+    }
+
+    @Test
+    public void servicioComprobarSiUsuarioBloqueado(){
+        // GIVEN
+        // Un usuario no bloqueado
+        Long idUser = addUsuarioBloqueadoBD();
+        UsuarioData usuario = usuarioService.findById(idUser);
+
+        // WHEN
+        // comprobamos si el usuario está bloqueado
+
+        boolean bloqueado = usuarioService.estaBloqueado(usuario.getEmail());
+
+        // THEN
+        // verificamos que está bloqueado usuario.
+        assertThat(bloqueado).isTrue();
     }
 }

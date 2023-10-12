@@ -4,9 +4,8 @@
 <head th:replace="fragments :: head (titulo='Lista Usuarios')"></head>
 
 <body>
-<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado})"></nav>
+<nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado})"></nav>
 <div class="container-fluid">
-
     <div class="row mt-3">
         <div class="col">
             <h2>Listado de Usuarios</h2>
@@ -21,6 +20,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Correo electrónico</th>
                     <th scope="col">Descripción</th>
+                    <th scope="col">Acción</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,13 +28,38 @@
                         <td th:text="${usuario.id}"></td>
                         <td th:text="${usuario.email}"></td>
                         <td><a th:href="@{/registrados/{id} (id=${usuario.id})}">Más info.</a></td>
+                        <div th:if="${usuario.id != usuarioPrincipal.id}">
+                            <td th:if="${usuario.estaBloqueado}" class="d-flex align-items-center">
+                                <form method="post" th:action="@{/usuarios/{id}/desbloquear(id=${usuario.id})}">
+                                    <button type="submit" class="btn btn-success">Desbloquear</button>
+                                    <button type="button" class="btn btn-outline-danger">Bloquear</button>
+                                </form>
+
+                            </td>
+                            <td th:unless="${usuario.estaBloqueado}" class="d-flex align-items-center">
+                                <form method="post" th:action="@{/usuarios/{id}/bloquear(id=${usuario.id})}">
+                                    <button type="button" class="btn btn-outline-success">Desbloquear</button>
+                                    <button type="submit" class="btn btn-danger">Bloquear</button>
+                                </form>
+                            </td>
+                        </div>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+</div>
+</div>
 </body>
 
 <div th:replace="fragments::javascript"/>

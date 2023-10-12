@@ -106,4 +106,23 @@ public class UsuarioService {
             return false;
         }
     }
+
+    @Transactional
+    public boolean bloquearUsuario(Long usuarioId){
+        UsuarioData usuario = findById(usuarioId);
+        usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail());
+        return estaBloqueado(usuario.getEmail());
+    }
+
+    @Transactional
+    public boolean desbloquearUsuario(Long usuarioId){
+        UsuarioData usuario = findById(usuarioId);
+        usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail());
+        return !estaBloqueado(usuario.getEmail());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean estaBloqueado(String emailUsuario){
+        return usuarioRepository.comprobarBloqueo(emailUsuario);
+    }
 }

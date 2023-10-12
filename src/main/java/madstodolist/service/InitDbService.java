@@ -34,6 +34,18 @@ public class InitDbService {
 
         Tarea tarea2 = new Tarea(usuario, "Renovar DNI");
         tareaRepository.save(tarea2);
+
+        Usuario usuarioAdmin = new Usuario("userAdmin@ua");
+        usuarioAdmin.setNombre("Usuario Administrador");
+        usuarioAdmin.setPassword("123");
+        usuarioAdmin.setEsAdministrador(true);
+        usuarioRepository.save(usuarioAdmin);
+
+        Usuario usuarioBloqueado = new Usuario("userBloqueado@ua");
+        usuarioBloqueado.setNombre("Usuario Bloqueado");
+        usuarioBloqueado.setPassword("123");
+        usuarioBloqueado.setEstaBloqueado(true);
+        usuarioRepository.save(usuarioBloqueado);
     }
 
 }

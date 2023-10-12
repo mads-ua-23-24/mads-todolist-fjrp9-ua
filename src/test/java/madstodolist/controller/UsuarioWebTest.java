@@ -77,6 +77,7 @@ public class UsuarioWebTest {
         // GIVEN
         // Moqueamos el método usuarioService.login para que devuelva
         // USER_NOT_FOUND
+        when(usuarioService.estaBloqueado("pepito.perez@gmail.com")).thenReturn(false);
         when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
                 .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
 
@@ -94,6 +95,7 @@ public class UsuarioWebTest {
         // GIVEN
         // Moqueamos el método usuarioService.login para que devuelva
         // ERROR_PASSWORD
+        when(usuarioService.estaBloqueado("ana.garcia@gmail.com")).thenReturn(false);
         when(usuarioService.login("ana.garcia@gmail.com", "000"))
                 .thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
 
@@ -270,5 +272,51 @@ public class UsuarioWebTest {
         String urlDEscripcion = "/registrados/" + anaGarcia.getId().toString();
         this.mockMvc.perform(get(urlDEscripcion))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void servicioBloquearUsuario() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        UsuarioData userBloqueado = new UsuarioData();
+        userBloqueado.setNombre("nombre");
+        userBloqueado.setEmail("nombre@gmail.com");
+        userBloqueado.setId(2L);
+
+        when(usuarioService.bloquearUsuario(userBloqueado.getId())).thenReturn(true);
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/usuarios/" + userBloqueado.getId().toString() + "/bloquear";
+        this.mockMvc.perform(post(urlDEscripcion))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+    }
+
+    @Test
+    public void servicioDesbloquearUsuario() throws Exception {
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
+        anaGarcia.setEmail("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
+        UsuarioData userBloqueado = new UsuarioData();
+        userBloqueado.setNombre("nombre");
+        userBloqueado.setEmail("nombre@gmail.com");
+        userBloqueado.setId(2L);
+
+        when(usuarioService.bloquearUsuario(userBloqueado.getId())).thenReturn(false);
+        when(managerUserSession.usuarioLogeado()).thenReturn(anaGarcia.getId());
+        when(usuarioService.esAdmin(anaGarcia.getId())).thenReturn(true);
+        when(usuarioService.findById(anaGarcia.getId())).thenReturn(anaGarcia);
+
+        String urlDEscripcion = "/usuarios/" + userBloqueado.getId().toString() + "/desbloquear";
+        this.mockMvc.perform(post(urlDEscripcion))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
     }
 }
