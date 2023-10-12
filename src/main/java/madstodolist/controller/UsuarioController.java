@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -70,15 +71,21 @@ public class UsuarioController {
 
     @PostMapping("/usuarios/{id}/bloquear")
     public String bloqueaUsuario(@PathVariable(value="id") Long idUsuario, Model model, RedirectAttributes flash, HttpSession session) {
-        usuarioService.bloquearUsuario(idUsuario);
-
+        if(usuarioService.bloquearUsuario(idUsuario)){
+            flash.addFlashAttribute("mensaje", "El usuario ha sido bloqueado.");
+        }else{
+            flash.addFlashAttribute("mensaje", "El usuario no ha podido ser bloqueado.");
+        }
         return "redirect:/registrados";
     }
 
     @PostMapping("/usuarios/{id}/desbloquear")
     public String desbloqueaUsuario(@PathVariable(value="id") Long idUsuario, Model model, RedirectAttributes flash, HttpSession session) {
-        usuarioService.desbloquearUsuario(idUsuario);
-
+        if(usuarioService.desbloquearUsuario(idUsuario)){
+            flash.addFlashAttribute("mensaje", "El usuario ha sido desbloqueado.");
+        }else{
+            flash.addFlashAttribute("mensaje", "El usuario no ha podido ser desbloqueado.");
+        }
         return "redirect:/registrados";
     }
 }

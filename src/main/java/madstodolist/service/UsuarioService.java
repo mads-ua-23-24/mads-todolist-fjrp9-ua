@@ -109,34 +109,20 @@ public class UsuarioService {
 
     @Transactional
     public boolean bloquearUsuario(Long usuarioId){
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        UsuarioData usuario = findById(usuarioId);
         usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail());
-        if(estaBloqueado(usuario.getEmail())){
-            return true;
-        }else{
-            return false;
-        }
+        return estaBloqueado(usuario.getEmail());
     }
 
     @Transactional
     public boolean desbloquearUsuario(Long usuarioId){
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        UsuarioData usuario = findById(usuarioId);
         usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail());
-        if(!estaBloqueado(usuario.getEmail())){
-            return true;
-        }else{
-            return false;
-        }
+        return !estaBloqueado(usuario.getEmail());
     }
 
     @Transactional(readOnly = true)
     public boolean estaBloqueado(String emailUsuario){
-        Usuario usuario = usuarioRepository.findByEmail(emailUsuario).orElse(null);
-        if (usuario == null) return false;
-        if(usuario.getEstaBloqueado()){
-            return true;
-        }else{
-            return false;
-        }
+        return usuarioRepository.comprobarBloqueo(emailUsuario);
     }
 }
