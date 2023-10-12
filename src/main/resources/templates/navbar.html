@@ -2,12 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <nav th:fragment="navbar (usuario, logeado)" class="navbar navbar-expand-md bg-dark navbar-dark">
+    <nav th:fragment="navbar (usuario, logeado, administrador)" class="navbar navbar-expand-md bg-dark navbar-dark">
         <div th:if="${logeado}" class="container-fluid">
             <ul class="nav navbar-nav mr-auto">
                 <li><a class="nav-link" th:href="@{/about}">ToDoList</a></li>
 
                 <li><a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Tareas</a></li>
+
+                <li th:if="${administrador}"><a class="nav-link" th:href="@{/registrados}">Registrados</a></li>
             </ul>
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item dropdown">

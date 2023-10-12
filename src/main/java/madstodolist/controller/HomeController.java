@@ -23,10 +23,14 @@ public class HomeController {
         if(managerUserSession.usuarioLogeado() == null){
             model.addAttribute("logeado",false);
             model.addAttribute("usuario", null);
+            model.addAttribute("administrador", false);
         }else{
+            Long idUsuario = managerUserSession.usuarioLogeado();
             model.addAttribute("logeado", true);
-            UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+            UsuarioData usuario = usuarioService.findById(idUsuario);
             model.addAttribute("usuario", usuario);
+            boolean administrador = usuarioService.esAdmin(idUsuario);
+            model.addAttribute("administrador", administrador);
         }
 
         return "about";
