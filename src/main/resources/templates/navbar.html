@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <nav th:fragment="navbar (usuario, logeado, administrador)" class="navbar navbar-expand-md bg-dark navbar-dark">
+    <nav th:fragment="navbar (usuario, logeado, administrador)" class="navbar navbar-expand-md bg-primary navbar-dark ">
         <div th:if="${logeado}" class="container-fluid">
             <ul class="nav navbar-nav mr-auto">
-                <li><a class="nav-link" th:href="@{/about}">ToDoList</a></li>
+                <li class="nav-item active"><a class="nav-link" th:href="@{/about}">ToDoList</a></li>
 
-                <li><a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Tareas</a></li>
+                <li class="nav-item active"><a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Tareas</a></li>
 
-                <li th:if="${administrador}"><a class="nav-link" th:href="@{/registrados}">Registrados</a></li>
+                <li class="nav-item active" th:if="${administrador}"><a class="nav-link" th:href="@{/registrados}">Registrados</a></li>
             </ul>
             <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item dropdown">
+                <li class="nav-item dropleft active">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${usuario.nombre}"></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="#">Cuenta</a>
@@ -24,9 +24,9 @@
 
         <div th:unless="${logeado}" class="container-fluid">
             <ul class="nav navbar-nav">
-                <li><a class="nav-link" th:href="@{/login}">Login</a></li>
+                <li class="nav-item active"><a class="nav-link" th:href="@{/login}">Login</a></li>
 
-                <li><a class="nav-link" th:href="@{/registro}">Registro</a></li>
+                <li class="nav-item active"><a class="nav-link" th:href="@{/registro}">Registro</a></li>
             </ul>
         </div>
     </nav>
