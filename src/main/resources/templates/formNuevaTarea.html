@@ -4,7 +4,7 @@
 <head th:replace="fragments :: head (titulo='Login')"></head>
 
 <body>
-<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=true)"></nav>
+<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=true, administrador=${administrador})"></nav>
 <div class="container-fluid">
 
     <h2 th:text="'Nueva tarea para el usuario ' + ${usuario.getNombre()}"></h2>
