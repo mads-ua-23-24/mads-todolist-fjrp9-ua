@@ -213,4 +213,63 @@ public class UsuarioTest {
 
         assertThat(numAdmin).isEqualTo(1);
     }
+
+    @Test
+    @Transactional
+    public void comprobarBloqueoCorrecto(){
+        // GIVEN
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setEstaBloqueado(false);
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // bloqueamos al usuario,
+
+        usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail());
+
+        // THEN
+        // verificamos que se ha bloqueado.
+
+        assertThat(usuarioRepository.comprobarBloqueo(usuario.getEmail())).isTrue();
+    }
+
+    @Test
+    @Transactional
+    public void comprobarDesbloqueoCorrecto(){
+        // GIVEN
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setEstaBloqueado(true);
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // desbloqueamos al usuario,
+
+        usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail());
+
+        // THEN
+        // verificamos que se ha desbloqueado.
+
+        assertThat(usuarioRepository.comprobarBloqueo(usuario.getEmail())).isFalse();
+    }
+
+    @Test
+    @Transactional
+    public void comprobarEstadoBloqueo(){
+        // GIVEN
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setEstaBloqueado(true);
+        usuarioRepository.save(usuario);
+
+        // WHEN
+        // THEN
+        // verificamos que está bloqueado.
+
+        assertThat(usuarioRepository.comprobarBloqueo(usuario.getEmail())).isTrue();
+    }
 }
