@@ -35,6 +35,22 @@ Se han añadido las clases **HomeController.java**, **UsuarioController.java** y
 - **UsuarioNoAdministradorException.java** representa un caso en el que un usuario intenta acceder a funciones restringidas para administradores. La anotación @ResponseStatus configura la respuesta HTTP 401 (No autorizado) cuando se lanza **UsuarioNoAdministradorException**, con el mensaje "No autorizado".
 
 ### Capa de servicio.
+En esta capa se han añadido a **UsuarioService.java** los siguientes métodos:
+
+- **`allUsuarios()`**: Recupera todos los usuarios registrados en la base de datos mediante el método `findAll()` de **UsuarioRepository**. Mapea los objetos Usuario a objetos UsuarioData utilizando `modelMapper.map(usuario, UsuarioData.class)`.
+
+    Devuelve una lista de objetos UsuarioData que contiene la información de todos los usuarios registrados en el sistema.
+
+- **`existeAdmin()`**: Verifica si existe al menos un administrador en el sistema. Utiliza `countUsuariosAdministradores()` de **UsuarioRepository** para contar el número de usuarios que son administradores. Si el resultado obtenido es igual a 1, devuelve true. Si es distinto de 1, devuelve false.
+
+- **`esAdmin()`**: Determina si un usario es usuario administrador o no. Para ello, obtiene el usuario mediante `usuarioRepository.findById(usuarioId).orElse(null)` con el id recibido. En caso de ser nulo el objeto obtenido o que reciba un false usando `usario.getEsAdministrador()` devuelve false. En caso contrario, devuelve false.
+
+- **`bloquearUsuario()`**: Obtiene el usuario que se desea bloquear mediante `findById(usuarioId)` para bloquearlo con `usuarioRepository.updateUsuarioBloqueo(true, usuario.getEmail())`. Usa la función `estaBloqueado()` pasandole el email del usuario para verificar si se ha bloqueado correctamente o no, devolviendo true o false respectivamente.
+
+- **`desbloquearUsuario()`**: Obtiene el usuario que se desea desbloquear mediante `findById(usuarioId)` para desbloquearlo con `usuarioRepository.updateUsuarioBloqueo(false, usuario.getEmail())`. Usa la función `estaBloqueado()` pasandole el email del usuario para verificar si se ha desbloqueado correctamente o no, devolviendo true o false respectivamente.
+
+- **`estaBloqueado()`**:  Utiliza el método `comprobarBloqueo()` de **UsuarioRepository** para obtener el estado de bloqueo del usuario identificado por su email. Retorna un valor booleano que indica si el usuario está bloqueado o no.
+
 ### Capa de persistencia.
 Se han añadido los siguientes métodos a la clase **UsuarioRepository.java**:
 
