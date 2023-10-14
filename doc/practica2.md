@@ -15,7 +15,7 @@ Estan son las plantillas thymeleaf que se han ido añadiendo conforme se ha ido 
 
     Todas las rutas anteriores están implementadas en el controlador **UsuarioCntroller.java**.
 
-- **navbar.html**: Actua como un fragment, contiene la implementación de la barra de menú. Cuando se utiliza este, se le debe pasar por parámetro un objeto UsuarioData, un booleano que indique si está o no logeado y un booleano que indique si el usuario es o no administrador.
+- **navbar.html**: Actua como un fragment, contiene la implementación de la barra de menú. Cuando se utiliza este, se le debe pasar por parámetro un objeto **UsuarioData**, un booleano que indique si está o no logeado y un booleano que indique si el usuario es o no administrador.
 
     - En caso de no estar logeado un usuario, se le muestra el enlace "Login", el cual realiza una petición **GET** a `/login` para logearse y un enlace "Registro", el cual realiza una petición **GET** a `/registro` para registrarse.
 
@@ -25,7 +25,26 @@ Estan son las plantillas thymeleaf que se han ido añadiendo conforme se ha ido 
 
     Todas estas rutas están implementadas en los ficheros **UsuarioController.java**, **LoginController.java** y **HomeController.java**.
 
-- **descripcionUsuario.html**: Esta vista muestra los el id, el email, el nombre y la fecha de nacimiento del usuario recibido.
+    Para usar correctamente este fragment, se usa de las siguientes tres maneras:
+
+    1. La primera es esta manera, la cual son para páginas donde puede entrar cualquier tipo de usuario.
+
+    ```html
+    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=${administrador})"></nav>
+    ```
+    
+    2. La segunda es esta manera, la cual son para páginas donde puede entrar solamente usuarios logeados y puede ser o no administrador.
+
+    ```html
+    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=true, administrador=${administrador})"></nav>
+    ```
+
+    3. La tercera es esta manera, la cual son para páginas donde puede entrar solamente un usuario administrador.
+
+    ```html
+    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=true)"></nav>
+    ```
+- **descripcionUsuario.html**: Esta vista muestra el id, el email, el nombre y la fecha de nacimiento del usuario recibido.
 
 ## Explicación de los tests implementados.
 
