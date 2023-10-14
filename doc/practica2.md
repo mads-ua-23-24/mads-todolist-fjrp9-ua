@@ -1,6 +1,16 @@
 # PRÁCTICA 2 - MADS - Francisco José Ramírez Paraíso
 ## Listado de nuevas clases y métodos implementados.
 ### Capa de controlador.
+
+Se han añadido las clases **HomeController.java**, **UsuarioController.java** y **UsuarioNoAdministradorException.java**.
+
+- **HomeController.java**, sus métodos añadidos son:
+    - **`about()`**: Está mapeado a la ruta `/about`. Su función principal es la de gestionar la información de la página _Acerca De_.
+    
+        Verifica si el usuario que realiza la petición está logeado mediante la función `managerUserSession.usuarioLogeado()`. Si no está logeado, establece los atributos "logeado", "usuario" y "administrador" como falsos en el modelo. En caso de estar logeado, recupera el id del usuario con la función anterior y utiliza la función `findById()` para recuperar toda la información de este. Además, determina si el usuario es un administrador mediante el método `esAdmin()` de **`UsuarioService`** y establece el atributo "administrador" en consecuencia. Todo esto sirve para poder poblar la barra de menú. 
+
+        Devuelve la vista **`about.html`**.
+
 ### Capa de servicio.
 ### Capa de persistencia.
 
