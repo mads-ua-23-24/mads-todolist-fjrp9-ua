@@ -10,6 +10,29 @@ Se han añadido las clases **HomeController.java**, **UsuarioController.java** y
         Verifica si el usuario que realiza la petición está logeado mediante la función `managerUserSession.usuarioLogeado()`. Si no está logeado, establece los atributos "logeado", "usuario" y "administrador" como falsos en el modelo. En caso de estar logeado, recupera el id del usuario con la función anterior y utiliza la función `findById()` para recuperar toda la información de este. Además, determina si el usuario es un administrador mediante el método `esAdmin()` de **`UsuarioService`** y establece el atributo "administrador" en consecuencia. Todo esto sirve para poder poblar la barra de menú. 
 
         Devuelve la vista **`about.html`**.
+- **UsuarioController.java**, sus métodos añadidos son:
+    - **`listadoUsuarios()`**: Está mapeado a la ruta `/registrados`. Su función principal es la de devolver los usuarios que estén registrados en el sistema.
+
+        Utiliza la función `comprobarUsuarioAdministrador()` para verificar si el usuario que realiza la petición es un usuario administrador. Posteriormente, utiliza la función `allUsuarios()` de **`UsuarioService`** para recuperar todos los usuarios registrados y los añade al modelo con el nombre "usuarios".
+
+        Además, establece el atributo "logeado" como verdadero y obtiene información detallada del usuario actual mediante la función `findById()` de **`UsuarioService`**, utilizando el ID obtenido a través de `managerUserSession.usuarioLogeado()`. La información del usuario se agrega al modelo con el nombre "usuarioPrincipal".
+
+        Devuelve la vista **`listaUsuarios.html`**.
+
+    - **`descripcionUsuario()`**: Está mapeado a la ruta `/registrados/{id}`. Su función principal es la de mostrar la descripción de un usuario específico. Utiliza `comprobarUsuarioAdministrador()` para validar los privilegios, luego agrega la información del usuario al modelo usando `findById()`. 
+    
+        Devuelve la vista **`descripcionUsuario.html`**. 
+
+
+    - **`bloqueaUsuario()`**: Está mapeado a la ruta `/usuarios/{id}/bloquear`. Su función principal es la de bloquear al usuario con el id especificado. Utiliza `bloquearUsuario()` de **`UsuarioService`** para bloquear al usuario y muestra un mensaje correspondiente a través de flash.  
+    
+        Redirige a la página de lista de usuarios mediante `/registrados`.
+
+    - **`desbloqueaUsuario()`**: Está mapeado a la ruta `/usuarios/{id}/desbloquear`. Su función es la de desbloquear al usuario con el id proporcionado. Utiliza `desbloquearUsuario()` de **`UsuarioService`** para desbloquear al usuario y muestra un mensaje correspondiente a través de flash. 
+    
+        Redirige a la página de lista de usuarios mediante `/registrados`.
+
+- **UsuarioNoAdministradorException.java** representa un caso en el que un usuario intenta acceder a funciones restringidas para administradores. La anotación @ResponseStatus configura la respuesta HTTP 401 (No autorizado) cuando se lanza **UsuarioNoAdministradorException**, con el mensaje "No autorizado".
 
 ### Capa de servicio.
 ### Capa de persistencia.
