@@ -36,7 +36,28 @@ Se han añadido las clases **HomeController.java**, **UsuarioController.java** y
 
 ### Capa de servicio.
 ### Capa de persistencia.
+Se han añadido los siguientes métodos a la clase **UsuarioRepository.java**:
 
+- **`countUsuariosAdministradores()`**: Utiliza la anotación **@Query** para realizar una consulta personalizada en la base de datos. En este caso, cuenta el número de usuarios que son administradores. La consulta SQL es la siguiente: 
+
+    ```sql
+    SELECT COUNT(u) FROM Usuario u WHERE u.esAdministrador = TRUE
+    ```
+
+- **`updateUsuarioBloqueo(boolean bloqueado, String emailUsuario)`**: Anotado con **@Modifying** y **@Query**, este método realiza una actualización en la base de datos. La consulta SQL es: 
+
+    ```sql
+    UPDATE Usuario u SET u.estaBloqueado = ?1 WHERE u.email = ?2
+    ```
+
+    Actualiza el estado de bloqueo de un usuario basado en el valor booleano proporcionado y su email.
+
+- **`comprobarBloqueo(String emailUsuario)`**: Utiliza la anotación **@Query** para realizar una consulta en la base de datos. Esta consulta busca y devuelve el estado de bloqueo de un usuario específico según su email. La consulta SQL es: 
+
+    ```sql
+    SELECT u.estaBloqueado FROM Usuario u WHERE u.email = ?1
+    ```
+  
 ## Listado de plantillas thyemeleaf añadidas.
 Estan son las plantillas thymeleaf que se han ido añadiendo conforme se ha ido realizando la práctica:
 
