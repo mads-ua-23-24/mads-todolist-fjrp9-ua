@@ -152,3 +152,10 @@ if(usuario.getEsAdministrador()){
     return "redirect:/usuarios/" + usuario.getId() + "/tareas";
 }
 ```
+
+# Links a los repositorios de GitHub y DockerHub:
+- GitHub:
+	- https://github.com/mads-ua-23-24/mads-todolist-fjrp9-ua.git
+- DockerHub:
+	- https://hub.docker.com/r/fjrp9/mads-todolist/tags
+
