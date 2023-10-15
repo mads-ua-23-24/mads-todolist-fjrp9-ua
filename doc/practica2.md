@@ -95,25 +95,6 @@ Estan son las plantillas thymeleaf que se han ido añadiendo conforme se ha ido 
 
     Todas estas rutas están implementadas en los ficheros **UsuarioController.java**, **LoginController.java** y **HomeController.java**.
 
-    Para usar correctamente este fragment, se usa de las siguientes tres maneras:
-
-    1. La primera es esta manera, la cual son para páginas donde puede entrar cualquier tipo de usuario.
-
-    ```html
-    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=${administrador})"></nav>
-    ```
-    
-    2. La segunda es esta manera, la cual son para páginas donde puede entrar solamente usuarios logeados y puede ser o no administrador.
-
-    ```html
-    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=true, administrador=${administrador})"></nav>
-    ```
-
-    3. La tercera es esta manera, la cual son para páginas donde puede entrar solamente un usuario administrador.
-
-    ```html
-    <nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=true)"></nav>
-    ```
 - **descripcionUsuario.html**: Esta vista muestra el id, el email, el nombre y la fecha de nacimiento del usuario recibido.
 
 ## Explicación de los tests implementados.
@@ -135,3 +116,39 @@ Para testear la protección del listado de usuario y descripción de usuario, se
 Para testear la funconalidad de bloquear y desbloquear usuarios, se ha implementado `servicioBloquearUsuario()` y `servicioDesbloquearUsuario()` en la clase **UsuarioWebTest.java** de la capa de controlador, donde se comprueba que al realizar una solicitud de bloqueo o desbloqueo de un usuario, se redirija correctamente a la página de listado de usuarios. También se ha implementado los test `servicioBloquearUsuario()` y `servicioNoBloquearUsuario()` para verificar que dado un usuario se bloquea o desbloquea correctamente y los test `servicioComprobarSiUsuarioNoBloqueado()` y `servicioComprobarSiUsuarioBloqueado()` verifican que dado un usario comprobar si no está bloqueado o lo está mediante la función `estaBloqueado()`. Estos anteriores pertenencientes a la clase **UsuarioServiceTest.java** de la capa de servicio. Finalmente, se han imeplementado los test `comprobarBloqueoCorrecto()` y `comprobarDesbloqueoCorrecto()`  para comprobar que la función `updateUsuarioBloqueo()` bloquea y desbloquea correctamente y el test `comprobarEstadoBloqueo()` que verifica que la función `comprobarBloqueo() `devuelve el estado del bloqueo de un usuario correctamente. Implementado en **UsuarioTest.java** de la capa de persistencia.
 
 ## Explicación de código fuente relevante de las nuevas funcionalidades implementadas.
+
+Para usar correctamente el fragment **`navbar.html`**, se usa de las siguientes tres maneras:
+
+1. La primera es esta manera, la cual son para páginas donde puede entrar cualquier tipo de usuario.
+
+```html
+<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=${administrador})"></nav>
+```
+
+2. La segunda es esta manera, la cual son para páginas donde puede entrar solamente usuarios logeados y puede ser o no administrador.
+
+```html
+<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=true, administrador=${administrador})"></nav>
+```
+
+3. La tercera es esta manera, la cual son para páginas donde puede entrar solamente un usuario administrador.
+
+```html
+<nav th:replace="navbar :: navbar (usuario=${usuario}, logeado=${logeado}, administrador=true)"></nav>
+```
+
+Algo interesante a destacar es la adición en el método `loginSubmit()` de el _if_ que comprueba si un usuario está bloqueado:
+
+```java
+if(!usuarioService.estaBloqueado(loginData.geteMail())){}
+```
+
+Y el _if_ que comprueba si el usuario es administrador o no:
+
+```java
+if(usuario.getEsAdministrador()){
+    return "redirect:/registrados";
+}else{
+    return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+}
+```
