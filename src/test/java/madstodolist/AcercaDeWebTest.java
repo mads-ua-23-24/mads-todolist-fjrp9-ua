@@ -54,7 +54,7 @@ public class AcercaDeWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(null);
 
         this.mockMvc.perform(get("/about"))
-                .andExpect(content().string(containsString("ToDoLis")));
+                .andExpect(content().string(containsString("ToDoList")));
     }
 
     @Test
