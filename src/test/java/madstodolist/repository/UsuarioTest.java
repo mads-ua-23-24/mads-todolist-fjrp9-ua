@@ -270,6 +270,6 @@ public class UsuarioTest {
         // THEN
         // verificamos que está bloqueado.
 
-        assertThat(usuarioRepository.comprobarBloqueo(usuario.getEmail())).isFalse();
+        assertThat(usuarioRepository.comprobarBloqueo(usuario.getEmail())).isTrue();
     }
 }
