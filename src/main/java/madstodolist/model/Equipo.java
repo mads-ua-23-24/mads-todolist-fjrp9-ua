@@ -1,10 +1,10 @@
 package madstodolist.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+@Entity
+@Table(name = "equipos")
 public class Equipo {
     private static final long serialVersionUID = 1L;
 
