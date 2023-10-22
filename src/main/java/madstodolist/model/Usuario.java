@@ -35,6 +35,10 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "usuario")
     Set<Tarea> tareas = new HashSet<>();
 
+    @ManyToMany(mappedBy = "usuarios")
+    Set<Equipo> equipos = new HashSet<>();
+
+
     // Constructor vacío necesario para JPA/Hibernate.
     // No debe usarse desde la aplicación.
     public Usuario() {}
@@ -118,6 +122,21 @@ public class Usuario implements Serializable {
 
     public void setEstaBloqueado(boolean estaBloqueado) {
         this.estaBloqueado = estaBloqueado;
+    }
+
+    public Set<Equipo> getEquipos() {
+        return equipos;
+    }
+
+    public void addEquipo(Equipo equipo) {
+        // Si el equipo ya está en la lista, no lo añadimos
+        if (equipos.contains(equipo)) return;
+        // Añadimos el equipo a la lista de equipos del usuario
+        equipos.add(equipo);
+        // Establecemos la relación inversa del usuario en el equipo
+        if (!equipo.getUsuarios().contains(this)) {
+            equipo.addUsuario(this);
+        }
     }
 
     @Override
