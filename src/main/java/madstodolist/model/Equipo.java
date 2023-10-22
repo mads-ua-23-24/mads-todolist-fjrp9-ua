@@ -17,10 +17,10 @@ public class Equipo {
     @NotNull
     private String nombre;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "equipo_usuario",
-            joinColumns = @JoinColumn(name = "equipo_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+            joinColumns = { @JoinColumn(name = "fk_equipo") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
     private Set<Usuario> usuarios = new HashSet<>();
 
     public Equipo() {}
@@ -45,12 +45,12 @@ public class Equipo {
 
     public void addUsuario(Usuario usuario) {
         // Si el usuario ya está en la lista, no lo añadimos
-        if (usuarios.contains(usuario)) return;
+        if (this.getUsuarios().contains(usuario)) return;
         // Añadimos el usuario a la lista de usuarios del equipo
-        usuarios.add(usuario);
+        this.getUsuarios().add(usuario);
         // Establecemos la relación inversa del equipo en el usuario
         if (!usuario.getEquipos().contains(this)) {
-            usuario.addEquipo(this);
+            usuario.getEquipos().add(this);
         }
     }
 

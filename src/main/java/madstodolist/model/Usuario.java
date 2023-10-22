@@ -128,17 +128,6 @@ public class Usuario implements Serializable {
         return equipos;
     }
 
-    public void addEquipo(Equipo equipo) {
-        // Si el equipo ya está en la lista, no lo añadimos
-        if (equipos.contains(equipo)) return;
-        // Añadimos el equipo a la lista de equipos del usuario
-        equipos.add(equipo);
-        // Establecemos la relación inversa del usuario en el equipo
-        if (!equipo.getUsuarios().contains(this)) {
-            equipo.addUsuario(this);
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
