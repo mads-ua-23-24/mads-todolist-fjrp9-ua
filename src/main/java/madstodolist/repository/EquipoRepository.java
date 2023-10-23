@@ -10,4 +10,6 @@ public interface EquipoRepository extends CrudRepository<Equipo, Long> {
     public List<Equipo> findAll();
 
     public Optional<Equipo> findById(Long id);
+
+    public List<Equipo> findAllByOrderByNombreAsc();
 }
