@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Lista Equipos')"></head>
+<body>
+<nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado}, administrador=false)"></nav>
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Listado de Equipos</h2>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombre</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="equipo: ${equipos}">
+                    <td th:text="${equipo.id}"></td>
+                    <td th:text="${equipo.nombre}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<div th:replace="fragments::javascript"/>
+</html>
