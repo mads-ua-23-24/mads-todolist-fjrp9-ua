@@ -25,6 +25,13 @@
             </table>
         </div>
     </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(usuarios)}">
+                <span>Actualmente no hay usuarios registrados en este equipo.</span>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <div th:replace="fragments::javascript"/>
