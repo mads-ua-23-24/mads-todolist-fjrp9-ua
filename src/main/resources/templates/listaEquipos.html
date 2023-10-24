@@ -10,7 +10,7 @@
             <h2>Listado de Equipos</h2>
         </div>
     </div>
-    <div class="row mt-3">
+    <div class="row mt-3" th:if="${!#lists.isEmpty(usuarios)}">
         <div class="col">
             <table class="table table-striped">
                 <thead>
@@ -28,6 +28,13 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(usuarios)}">
+                <span>Actualmente no hay equipos registrados.</span>
+            </div>
         </div>
     </div>
 </div>
