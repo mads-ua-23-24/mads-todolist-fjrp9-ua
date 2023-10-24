@@ -133,4 +133,37 @@ public class EquipoWebTest {
                         )
                 )));
     }
+
+    @Test
+    public void listaEquiposMuestraMensajeInfo() throws Exception {
+
+        // GIVEN
+        // Un usuario logeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(addUsuarioBD());
+
+        // WHEN
+        // Accedemos a la lista de equipos
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaEquipos"))
+                .andExpect(content().string(containsString("Actualmente no hay equipos registrados.")));
+    }
+
+    @Test
+    public void listaUsuariosDeEquipoMuestraMensajeInfo() throws Exception {
+
+        Long idEquipo = addEquipoBD().get(1).getId();
+
+        // GIVEN
+        // Un usuario logeado
+        when(managerUserSession.usuarioLogeado()).thenReturn(addUsuarioBD());
+
+        // WHEN
+        // Accedemos a la lista de equipos
+        String url = "/equipos/" + idEquipo.toString() + "/usuarios";
+        this.mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaUsuariosEquipo"))
+                .andExpect(content().string(containsString("Actualmente no hay usuarios registrados en este equipo.")));
+    }
 }
