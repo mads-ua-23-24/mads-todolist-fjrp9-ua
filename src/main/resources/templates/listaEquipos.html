@@ -10,6 +10,11 @@
             <h2>Listado de Equipos</h2>
         </div>
     </div>
+    <div class="row align-items-center">
+        <div class="col">
+            <a class="btn btn-success" th:href="@{/equipos/crear}" />Añadir nuevo Equipo</a>
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col">
             <table class="table table-striped">
@@ -18,6 +23,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Usuarios</th>
+                    <th scope="col">Accion</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,6 +31,16 @@
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
                     <td><a class="btn btn-info" th:href="@{/equipos/{id}/usuarios(id=${equipo.id})}" role="button">Info</a></td>
+                    <div>
+                        <td class="d-flex align-items-center">
+                            <form method="post" th:action="@{/equipos/{id}/añadirUsuario(id=${equipo.id})}">
+                                <button type="submit" class="btn btn-success">Unirse</button>
+                            </form>
+                            <form method="post" th:action="@{/equipos/{id}/eliminarUsuario(id=${equipo.id})}">
+                                <button type="submit" class="btn btn-danger">Salir</button>
+                            </form>
+                        </td>
+                    </div>
                 </tr>
                 </tbody>
             </table>
@@ -34,6 +50,17 @@
         <div class="col">
             <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(equipos)}">
                 <span>Actualmente no hay equipos registrados.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         </div>
     </div>

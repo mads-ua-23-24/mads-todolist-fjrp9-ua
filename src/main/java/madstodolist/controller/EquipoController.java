@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import madstodolist.service.EquipoService;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -67,5 +71,71 @@ public class EquipoController {
             model.addAttribute("equipo", equipoData);
 
             return "listaUsuariosEquipo";
+    }
+
+    @GetMapping("equipos/crear")
+    public String crearEquipo(Model model) {
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        model.addAttribute("logeado", true);
+        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        model.addAttribute("usuarioPrincipal", usuario);
+        boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
+        model.addAttribute("administrador", administrador);
+
+        model.addAttribute("equipoData", new EquipoData());
+
+        return "formCrearEquipo";
+    }
+
+    @PostMapping("/equipos/crear")
+    public String crearEquipoSubmit(@Valid EquipoData equipoData, BindingResult result, Model model, RedirectAttributes flash) {
+
+        if (result.hasErrors()) {
+            return "formRegistro";
+        }
+
+        EquipoData equipo = new EquipoData();
+        equipo.setNombre(equipoData.getNombre());
+
+        equipoService.crearEquipo(equipo.getNombre());
+        flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
+        return "redirect:/equipos";
+    }
+
+    @PostMapping("equipos/{id}/añadirUsuario")
+    public String añadirUsuarioAEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        try{
+            equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
+        }catch (Exception e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+        flash.addFlashAttribute("mensaje", "Te has añadido al equipo correctamente");
+
+        return "redirect:/equipos";
+    }
+
+    @PostMapping("equipos/{id}/eliminarUsuario")
+    public String eliminarUsuarioDeEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        try{
+            equipoService.eliminarUsuarioDeEquipo(idEquipo, IdUsuarioLogeado);
+        }catch (Exception e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+        flash.addFlashAttribute("mensaje", "Te has eliminado del equipo correctamente");
+
+        return "redirect:/equipos";
     }
 }
