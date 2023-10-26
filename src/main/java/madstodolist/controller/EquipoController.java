@@ -68,4 +68,19 @@ public class EquipoController {
 
             return "listaUsuariosEquipo";
     }
+
+    @GetMapping("equipos/crear")
+    public String crearEquipo(Model model) {
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        model.addAttribute("logeado", true);
+        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        model.addAttribute("usuarioPrincipal", usuario);
+        boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
+        model.addAttribute("administrador", administrador);
+
+        return "formCrearEquipo";
+    }
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Lista Equipos')"></head>
+<body>
+<nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado}, administrador=${administrador})"></nav>
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Crear un Equipo</h2>
+        </div>
+    </div>
+</div>
+</body>
+<div th:replace="fragments::javascript"/>
+</html>
