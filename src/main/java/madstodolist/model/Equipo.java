@@ -54,6 +54,17 @@ public class Equipo {
         }
     }
 
+    public void delUsuario(Usuario usuario){
+        //Si el usuario no está en la lista, no lo eliminamos
+        if (!this.getUsuarios().contains(usuario)) return;
+        //Eliminamos el usuario de la lista de usuarios del equipo
+        this.getUsuarios().remove(usuario);
+        //Eliminamos la relación inversa del equipo en el usuario
+        if (usuario.getEquipos().contains(this)) {
+            usuario.getEquipos().remove(this);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
