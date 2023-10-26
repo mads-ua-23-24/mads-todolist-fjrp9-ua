@@ -9,6 +9,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @SpringBootTest
@@ -110,6 +112,35 @@ public class EquipoServiceTest {
         // Creamos un equipo pero no un usuario y comprobamos que también se lanza una excepción
         EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
         assertThatThrownBy(() -> equipoService.añadirUsuarioAEquipo(equipo.getId(), 1L))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void eliminarUsuarioDeEquipo() {
+        // GIVEN
+        // Un usuario y un equipo en la base de datos
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // Añadimos el usuario al equipo
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        // WHEN
+        //Eliminamos el usuario del equipo
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+
+        // THEN
+        // El usuario no pertenece al equipo
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        assertThat(usuarios).hasSize(0);
+        assertThat(usuarios).doesNotContain(usuario);
+    }
+
+    @Test
+    public void excepcionSiIntentaCrearUnEquipoConNombreVacio() {
+        assertThatThrownBy(() -> equipoService.crearEquipo(""))
                 .isInstanceOf(EquipoServiceException.class);
     }
 }
