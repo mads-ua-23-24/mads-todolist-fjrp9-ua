@@ -96,6 +96,10 @@ public class EquipoController {
             return "formRegistro";
         }
 
+        EquipoData equipo = new EquipoData();
+        equipo.setNombre(equipoData.getNombre());
+
+        equipoService.crearEquipo(equipo.getNombre());
         return "redirect:/equipos";
     }
 }

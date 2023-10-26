@@ -10,6 +10,7 @@
             <h2>Crear un equipo nuevo</h2>
         </div>
     </div>
+
     <div class="row justify-content-center">
         <div class="col-6">
             <form method="post" th:action="@{/equipos/crear}" th:object="${equipoData}">
@@ -27,6 +28,7 @@
             </form>
         </div>
     </div>
+
 </div>
 </body>
 <div th:replace="fragments::javascript"/>
