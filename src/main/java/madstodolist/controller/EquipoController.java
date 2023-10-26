@@ -102,4 +102,16 @@ public class EquipoController {
         equipoService.crearEquipo(equipo.getNombre());
         return "redirect:/equipos";
     }
+
+    @PostMapping("equipos/{id}/añadirUsuario")
+    public String añadirUsuarioAEquipo(Model model, @PathVariable(value="id") Long idEquipo){
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
+        model.addAttribute("mensaje", "Te has añadido al equipo correctamente");
+
+        return "redirect:/equipos";
+    }
 }
