@@ -114,7 +114,6 @@ public class EquipoController {
         try{
             equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
         }catch (Exception e){
-            System.out.println("La excepcion ha saltado correctamente");
             flash.addFlashAttribute("mensaje", e.getMessage());
             return "redirect:/equipos";
         }
