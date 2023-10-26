@@ -5,9 +5,26 @@
 <body>
 <nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado}, administrador=${administrador})"></nav>
 <div class="container-fluid">
-    <div class="row mt-3">
-        <div class="col">
-            <h2>Crear un Equipo</h2>
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto">
+            <h2>Crear un equipo nuevo</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form method="post" th:action="@{/equipos/crear}" th:object="${equipoData}">
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="nombre">Nombre del equipo</label>
+                            <input id="nombre" class="form-control" name="nombre" placeholder="Nombre"
+                                   type="text" th:field="*{nombre}" required/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Registro</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

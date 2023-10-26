@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import madstodolist.service.EquipoService;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -81,6 +84,18 @@ public class EquipoController {
         boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
         model.addAttribute("administrador", administrador);
 
+        model.addAttribute("equipoData", new EquipoData());
+
         return "formCrearEquipo";
+    }
+
+    @PostMapping("/equipos/crear")
+    public String crearEquipoSubmit(@Valid EquipoData equipoData, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            return "formRegistro";
+        }
+
+        return "redirect:/equipos";
     }
 }
