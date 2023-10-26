@@ -10,6 +10,11 @@
             <h2>Listado de Equipos</h2>
         </div>
     </div>
+    <div class="row align-items-center">
+        <div class="col">
+            <a class="btn btn-success" href=# />Añadir nuevo Equipo</a>
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col">
             <table class="table table-striped">
@@ -18,6 +23,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Usuarios</th>
+                    <th scope="col">Accion</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,6 +31,12 @@
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
                     <td><a class="btn btn-info" th:href="@{/equipos/{id}/usuarios(id=${equipo.id})}" role="button">Info</a></td>
+                    <div>
+                        <td class="d-flex align-items-center">
+                            <button type="button" class="btn btn-success">Unirme</button>
+                            <button type="button" class="btn btn-danger">Salir</button>
+                        </td>
+                    </div>
                 </tr>
                 </tbody>
             </table>
