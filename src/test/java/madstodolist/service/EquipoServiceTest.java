@@ -137,4 +137,10 @@ public class EquipoServiceTest {
         assertThat(usuarios).hasSize(0);
         assertThat(usuarios).doesNotContain(usuario);
     }
+
+    @Test
+    public void excepcionSiIntentaCrearUnEquipoConNombreVacio() {
+        assertThatThrownBy(() -> equipoService.crearEquipo(""))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
