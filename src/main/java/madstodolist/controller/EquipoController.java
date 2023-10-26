@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -90,7 +91,7 @@ public class EquipoController {
     }
 
     @PostMapping("/equipos/crear")
-    public String crearEquipoSubmit(@Valid EquipoData equipoData, BindingResult result, Model model) {
+    public String crearEquipoSubmit(@Valid EquipoData equipoData, BindingResult result, Model model, RedirectAttributes flash) {
 
         if (result.hasErrors()) {
             return "formRegistro";
@@ -100,17 +101,41 @@ public class EquipoController {
         equipo.setNombre(equipoData.getNombre());
 
         equipoService.crearEquipo(equipo.getNombre());
+        flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
         return "redirect:/equipos";
     }
 
     @PostMapping("equipos/{id}/añadirUsuario")
-    public String añadirUsuarioAEquipo(Model model, @PathVariable(value="id") Long idEquipo){
+    public String añadirUsuarioAEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
 
         Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
         comprobarUsuarioLogeado(IdUsuarioLogeado);
 
-        equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
-        model.addAttribute("mensaje", "Te has añadido al equipo correctamente");
+        try{
+            equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
+        }catch (Exception e){
+            System.out.println("La excepcion ha saltado correctamente");
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+        flash.addFlashAttribute("mensaje", "Te has añadido al equipo correctamente");
+
+        return "redirect:/equipos";
+    }
+
+    @PostMapping("equipos/{id}/eliminarUsuario")
+    public String eliminarUsuarioDeEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+
+        try{
+            equipoService.eliminarUsuarioDeEquipo(idEquipo, IdUsuarioLogeado);
+        }catch (Exception e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+        flash.addFlashAttribute("mensaje", "Te has eliminado del equipo correctamente");
 
         return "redirect:/equipos";
     }

@@ -36,8 +36,9 @@
                             <form method="post" th:action="@{/equipos/{id}/añadirUsuario(id=${equipo.id})}">
                                 <button type="submit" class="btn btn-success">Unirse</button>
                             </form>
-
-                            <button type="button" class="btn btn-danger">Salir</button>
+                            <form method="post" th:action="@{/equipos/{id}/eliminarUsuario(id=${equipo.id})}">
+                                <button type="submit" class="btn btn-danger">Salir</button>
+                            </form>
                         </td>
                     </div>
                 </tr>
