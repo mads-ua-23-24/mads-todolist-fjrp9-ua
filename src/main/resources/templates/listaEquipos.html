@@ -24,6 +24,7 @@
                     <th scope="col">Nombre</th>
                     <th scope="col">Usuarios</th>
                     <th scope="col">Accion</th>
+                    <th scope="col" th:if="${usuarioPrincipal.esAdministrador}">Accion como Administrador</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,16 +32,20 @@
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
                     <td><a class="btn btn-info" th:href="@{/equipos/{id}/usuarios(id=${equipo.id})}" role="button">Info</a></td>
-                    <div>
-                        <td class="d-flex align-items-center">
+                    <td>
+                        <div class="d-flex align-items-center">
                             <form method="post" th:action="@{/equipos/{id}/añadirUsuario(id=${equipo.id})}">
                                 <button type="submit" class="btn btn-success">Unirse</button>
                             </form>
                             <form method="post" th:action="@{/equipos/{id}/eliminarUsuario(id=${equipo.id})}">
                                 <button type="submit" class="btn btn-danger">Salir</button>
                             </form>
-                        </td>
-                    </div>
+                        </div>
+                    </td>
+                    <td th:if="${usuarioPrincipal.esAdministrador}">
+                        <a class="btn btn-primary" th:href="@{#}" role="button">Editar</a>
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;">Borrar</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
