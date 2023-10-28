@@ -44,7 +44,7 @@
                     </td>
                     <td th:if="${usuarioPrincipal.esAdministrador}">
                         <a class="btn btn-primary" th:href="@{#}" role="button">Editar</a>
-                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;">Borrar</button>
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;" th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Borrar</button>
                     </td>
                 </tr>
                 </tbody>
@@ -72,4 +72,17 @@
 </div>
 </body>
 <div th:replace="fragments::javascript"/>
+
+<!-- Lanzamos una petición DELETE por JavaScript para borrar un equipo -->
+
+<script type="text/javascript">
+    function del(urlBorrar) {
+        if (confirm('¿Estás seguro/a de que quieres borrar el equipo?')) {
+            fetch(urlBorrar, {
+                method: 'DELETE'
+            }).then((res) => location.reload());
+        }
+    }
+</script>
+
 </html>
