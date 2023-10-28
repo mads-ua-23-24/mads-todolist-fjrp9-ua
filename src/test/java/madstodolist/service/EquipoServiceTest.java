@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -141,6 +142,66 @@ public class EquipoServiceTest {
     @Test
     public void excepcionSiIntentaCrearUnEquipoConNombreVacio() {
         assertThatThrownBy(() -> equipoService.crearEquipo(""))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void testModificarEquipo() {
+        // GIVEN
+        // Un equipo en la BD
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // WHEN
+        // Modificamos el nombre del equipo
+        EquipoData equipoModificado = equipoService.modificarEquipo(equipo.getId(), "Proyecto 2");
+        // THEN
+        // El nombre del equipo se ha modificado
+        assertThat(equipoModificado.getNombre()).isEqualTo("Proyecto 2");
+    }
+
+    @Test
+    public void testBorraEquipo() {
+        //GIVEN
+        // Un equipo en la BD y un usuario en el equipo
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        //WHEN
+        // Borramos el equipo
+        equipoService.borraEquipo(equipo.getId());
+
+        //THEN
+        // El equipo se ha borrado y el usuario ya no pertenece a ningún equipo
+        assertThatThrownBy(() -> equipoService.recuperarEquipo(equipo.getId()))
+                .isInstanceOf(EquipoServiceException.class);
+
+        List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
+        assertThat(equipos).hasSize(0);
+    }
+
+    @Test
+    public void testIntentarModificarUnEquipoQueNoExiste() {
+        assertThatThrownBy(() -> equipoService.modificarEquipo(1L, "Proyecto 2"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void testIntentarModificarUnEquipoConNuevoNombreVacio() {
+        // GIVEN
+        // Un equipo en la BD
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // WHEN
+        // Modificamos el nombre del equipo
+        assertThatThrownBy(() -> equipoService.modificarEquipo(equipo.getId(), ""))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void testIntentarBorrarUnEquipoQueNoExiste() {
+        assertThatThrownBy(() -> equipoService.borraEquipo(1L))
                 .isInstanceOf(EquipoServiceException.class);
     }
 }

@@ -90,4 +90,22 @@ public class EquipoService {
             throw new EquipoServiceException("El usuario no pertenece al equipo");
         equipo.delUsuario(usuario);
     }
+
+    @Transactional
+    public EquipoData modificarEquipo(Long id, String nombre) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe el equipo con id " + id);
+        else if (nombre == null || nombre.isEmpty())
+            throw new EquipoServiceException("El nombre del equipo no puede estar vacío");
+        equipo.setNombre(nombre);
+        equipo = equipoRepository.save(equipo);
+        return modelMapper.map(equipo, EquipoData.class);
+    }
+
+    @Transactional
+    public void borraEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        if (equipo == null) throw new EquipoServiceException("No existe el equipo con id " + id);
+        equipoRepository.delete(equipo);
+    }
 }
