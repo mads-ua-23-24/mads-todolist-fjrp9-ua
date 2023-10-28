@@ -98,4 +98,10 @@ public class EquipoService {
         equipo = equipoRepository.save(equipo);
         return modelMapper.map(equipo, EquipoData.class);
     }
+
+    @Transactional
+    public void borraEquipo(Long id) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        equipoRepository.delete(equipo);
+    }
 }

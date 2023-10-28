@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -155,5 +156,29 @@ public class EquipoServiceTest {
         // THEN
         // El nombre del equipo se ha modificado
         assertThat(equipoModificado.getNombre()).isEqualTo("Proyecto 2");
+    }
+
+    @Test
+    public void testBorraEquipo() {
+        //GIVEN
+        // Un equipo en la BD y un usuario en el equipo
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+
+        //WHEN
+        // Borramos el equipo
+        equipoService.borraEquipo(equipo.getId());
+
+        //THEN
+        // El equipo se ha borrado y el usuario ya no pertenece a ningún equipo
+        assertThatThrownBy(() -> equipoService.recuperarEquipo(equipo.getId()))
+                .isInstanceOf(EquipoServiceException.class);
+
+        List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
+        assertThat(equipos).hasSize(0);
     }
 }
