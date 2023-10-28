@@ -151,20 +151,13 @@ public class EquipoController {
 
     @DeleteMapping("/equipos/{id}")
     @ResponseBody
-    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo, Model model, RedirectAttributes flash){
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo, Model model){
 
         Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
         comprobarUsuarioLogeado(IdUsuarioLogeado);
         comprobarUsuarioAdministrador(IdUsuarioLogeado);
 
-        try{
-            equipoService.borraEquipo(idEquipo);
-        }catch (Exception e){
-            flash.addFlashAttribute("mensaje", e.getMessage());
-            return "redirect:/equipos";
-        }
-        flash.addFlashAttribute("mensaje", "Equipo eliminado correctamente");
-
+        equipoService.borraEquipo(idEquipo);
         return "";
     }
 }
