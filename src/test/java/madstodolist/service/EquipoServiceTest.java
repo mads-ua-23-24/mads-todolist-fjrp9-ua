@@ -198,4 +198,10 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.modificarEquipo(equipo.getId(), ""))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void testIntentarBorrarUnEquipoQueNoExiste() {
+        assertThatThrownBy(() -> equipoService.borraEquipo(1L))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
