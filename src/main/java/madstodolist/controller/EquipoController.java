@@ -5,6 +5,7 @@ import madstodolist.controller.exception.UsuarioNoAdministradorException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.dto.EquipoData;
 import madstodolist.dto.UsuarioData;
+import madstodolist.service.EquipoServiceException;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -159,5 +160,43 @@ public class EquipoController {
 
         equipoService.borraEquipo(idEquipo);
         return "";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditaEquipo(@PathVariable(value="id") Long idEquipo, Model model, RedirectAttributes flash) {
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+        comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+        try{
+            EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+            model.addAttribute("equipo", equipo);
+            model.addAttribute("usuario", usuarioService.findById(IdUsuarioLogeado));
+            model.addAttribute("equipoData", new EquipoData());
+        }catch (EquipoServiceException e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+
+        return "formEditarEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String grabaModificacion(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash) {
+
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
+            comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+            try{
+                equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+            }catch (EquipoServiceException e){
+                flash.addFlashAttribute("mensaje", e.getMessage());
+                return "redirect:/equipos";
+            }
+
+            flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+            return "redirect:/equipos";
     }
 }

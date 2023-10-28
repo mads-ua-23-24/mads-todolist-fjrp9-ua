@@ -43,7 +43,7 @@
                         </div>
                     </td>
                     <td th:if="${usuarioPrincipal.esAdministrador}">
-                        <a class="btn btn-primary" th:href="@{#}" role="button">Editar</a>
+                        <a class="btn btn-primary" th:href="@{/equipos/{id}/editar(id=${equipo.id})}" role="button">Editar</a>
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;" th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Borrar</button>
                     </td>
                 </tr>
