@@ -181,4 +181,21 @@ public class EquipoServiceTest {
         List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
         assertThat(equipos).hasSize(0);
     }
+
+    @Test
+    public void testIntentarModificarUnEquipoQueNoExiste() {
+        assertThatThrownBy(() -> equipoService.modificarEquipo(1L, "Proyecto 2"))
+                .isInstanceOf(EquipoServiceException.class);
+    }
+
+    @Test
+    public void testIntentarModificarUnEquipoConNuevoNombreVacio() {
+        // GIVEN
+        // Un equipo en la BD
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // WHEN
+        // Modificamos el nombre del equipo
+        assertThatThrownBy(() -> equipoService.modificarEquipo(equipo.getId(), ""))
+                .isInstanceOf(EquipoServiceException.class);
+    }
 }
