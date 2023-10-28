@@ -143,4 +143,17 @@ public class EquipoServiceTest {
         assertThatThrownBy(() -> equipoService.crearEquipo(""))
                 .isInstanceOf(EquipoServiceException.class);
     }
+
+    @Test
+    public void testModificarEquipo() {
+        // GIVEN
+        // Un equipo en la BD
+        EquipoData equipo = equipoService.crearEquipo("Proyecto 1");
+        // WHEN
+        // Modificamos el nombre del equipo
+        EquipoData equipoModificado = equipoService.modificarEquipo(equipo.getId(), "Proyecto 2");
+        // THEN
+        // El nombre del equipo se ha modificado
+        assertThat(equipoModificado.getNombre()).isEqualTo("Proyecto 2");
+    }
 }

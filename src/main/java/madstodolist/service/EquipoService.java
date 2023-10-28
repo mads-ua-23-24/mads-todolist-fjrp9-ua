@@ -90,4 +90,12 @@ public class EquipoService {
             throw new EquipoServiceException("El usuario no pertenece al equipo");
         equipo.delUsuario(usuario);
     }
+
+    @Transactional
+    public EquipoData modificarEquipo(Long id, String nombre) {
+        Equipo equipo = equipoRepository.findById(id).orElse(null);
+        equipo.setNombre(nombre);
+        equipo = equipoRepository.save(equipo);
+        return modelMapper.map(equipo, EquipoData.class);
+    }
 }
