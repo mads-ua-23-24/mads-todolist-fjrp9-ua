@@ -3,7 +3,7 @@
 
 <head th:replace="fragments :: head (titulo='Lista Equipos')"></head>
 <body>
-<nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado}, administrador=${administrador})"></nav>
+<nav th:replace="navbar :: navbar (usuario=${usuarioPrincipal}, logeado=${logeado}, administrador=${usuarioPrincipal.esAdministrador})"></nav>
 <div class="container-fluid">
     <div class="row justify-content-center mb-3">
         <div class="col-auto">
