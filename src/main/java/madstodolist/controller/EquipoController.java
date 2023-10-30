@@ -31,9 +31,15 @@ public class EquipoController {
     ManagerUserSession managerUserSession;
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
-        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        if (!idUsuario.equals(idUsuarioLogeado))
+
+        if (idUsuario == null){
             throw new UsuarioNoLogeadoException();
+        }else{
+            Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+
+            if (!idUsuario.equals(idUsuarioLogeado))
+                throw new UsuarioNoLogeadoException();
+        }
     }
 
     private void comprobarUsuarioAdministrador(Long idUsuario){
@@ -51,16 +57,18 @@ public class EquipoController {
     @GetMapping("/equipos")
     public String listarEquipos(Model model){
 
-        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-        comprobarUsuarioLogeado(IdUsuarioLogeado);
-
-        List<EquipoData> equipos = equipoService.findAllOrdenadoPorNombre();
-        model.addAttribute("equipos", equipos);
-        model.addAttribute("logeado", true);
-        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
-        model.addAttribute("usuarioPrincipal", usuario);
-        boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
-        model.addAttribute("administrador", administrador);
+        try{
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
+            List<EquipoData> equipos = equipoService.findAllOrdenadoPorNombre();
+            model.addAttribute("equipos", equipos);
+            model.addAttribute("logeado", true);
+            UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+            model.addAttribute("usuarioPrincipal", usuario);
+        }catch (UsuarioNoLogeadoException e){
+            System.out.println("############################################# SALTA EXCEPCION USUARIO NO LOGEADO #############################################");
+            return "redirect:/login";
+        }
 
         return "listaEquipos";
     }
