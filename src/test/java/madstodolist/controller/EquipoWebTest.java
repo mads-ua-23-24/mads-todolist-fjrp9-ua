@@ -73,6 +73,15 @@ public class EquipoWebTest {
         return usuario.getId();
     }
 
+    Long addUsuarioAdminBD() {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("admin@ua");
+        usuario.setPassword("123");
+        usuario.setEsAdministrador(true);
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
     @Test
     public void listaEquipos() throws Exception {
 
@@ -309,5 +318,85 @@ public class EquipoWebTest {
                 .andExpect(view().name("listaUsuariosEquipo"))
                 .andExpect(model().attributeExists("usuarios"))
                 .andExpect(model().attribute("usuarios", hasSize(0)));
+    }
+
+    @Test
+    public void usuarioAdminLeAparecenLosBotonesEditarBorrarEnListadoEquipo() throws Exception {
+        //GIVEN
+        //Un usuario admin logeado y unos equipos en la BD
+        Long idUsuario = addUsuarioAdminBD();
+        addEquipoBD();
+        when(managerUserSession.usuarioLogeado()).thenReturn(idUsuario);
+        //WHEN, THEN
+        //Accedemos a la lista de equipos
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaEquipos"))
+                .andExpect(content().string(containsString("Editar")))
+                .andExpect(content().string(containsString("Borrar")));
+
+    }
+
+    @Test
+    public void usuarioNormalNoLeAparecenLosBotonesEditarBorrarEnListadoEquipo() throws Exception {
+        //GIVEN
+        //Un usuario admin logeado y unos equipos en la BD
+        Long idUsuario = addUsuarioBD();
+        addEquipoBD();
+        when(managerUserSession.usuarioLogeado()).thenReturn(idUsuario);
+        //WHEN, THEN
+        //Accedemos a la lista de equipos
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaEquipos"))
+                .andExpect(content().string(not(containsString("Acciones de Administrador"))));
+
+    }
+
+    @Test
+    public void usuarioAdminPuedeEditarEquipo() throws Exception {
+        //GIVEN
+        //Un usuario admin logeado y un equipo en la BD
+        Long idUsuario = addUsuarioAdminBD();
+        Long idEquipo = addEquipoBD().get(0).getId();
+        when(managerUserSession.usuarioLogeado()).thenReturn(idUsuario);
+        //WHEN
+        //Accedemos a la lista de equipos
+        this.mockMvc.perform(post("/equipos/" + idEquipo.toString() + "/editar")
+                .param("nombre", "EquipoCCC"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+        //THEN
+        //Comprobamos que se ha editado correctamente
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaEquipos"))
+                .andExpect(model().attributeExists("equipos"))
+                .andExpect(model().attribute("equipos", hasSize(2)))
+                .andExpect(model().attribute("equipos", hasItem(
+                        allOf(
+                                hasProperty("nombre", is("EquipoCCC"))
+                        )
+                )));
+    }
+
+    @Test
+    public void usuarioAdminPuedeBorrarEquipo() throws Exception {
+        //GIVEN
+        //Un usuario admin logeado y un equipo en la BD
+        Long idUsuario = addUsuarioAdminBD();
+        Long idEquipo = addEquipoBD().get(0).getId();
+        when(managerUserSession.usuarioLogeado()).thenReturn(idUsuario);
+        //WHEN
+        //Accedemos a la lista de equipos
+        this.mockMvc.perform(delete("/equipos/" + idEquipo.toString()))
+                .andExpect(status().isOk());
+        //THEN
+        //Comprobamos que se ha borrado correctamente
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listaEquipos"))
+                .andExpect(model().attributeExists("equipos"))
+                .andExpect(model().attribute("equipos", hasSize(1)));
     }
 }
