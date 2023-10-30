@@ -5,15 +5,14 @@ import madstodolist.controller.exception.UsuarioNoAdministradorException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.dto.EquipoData;
 import madstodolist.dto.UsuarioData;
+import madstodolist.service.EquipoServiceException;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import madstodolist.service.EquipoService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -35,6 +34,18 @@ public class EquipoController {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         if (!idUsuario.equals(idUsuarioLogeado))
             throw new UsuarioNoLogeadoException();
+    }
+
+    private void comprobarUsuarioAdministrador(Long idUsuario){
+
+        if(idUsuario != null){
+            boolean esAdmin  = usuarioService.esAdmin(idUsuario);
+            if (!esAdmin){
+                throw new UsuarioNoAdministradorException();
+            }
+        }else{
+            throw new UsuarioNoAdministradorException();
+        }
     }
 
     @GetMapping("/equipos")
@@ -137,5 +148,55 @@ public class EquipoController {
         flash.addFlashAttribute("mensaje", "Te has eliminado del equipo correctamente");
 
         return "redirect:/equipos";
+    }
+
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo, Model model){
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+        comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+        equipoService.borraEquipo(idEquipo);
+        return "";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditaEquipo(@PathVariable(value="id") Long idEquipo, Model model, RedirectAttributes flash) {
+
+        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+        comprobarUsuarioLogeado(IdUsuarioLogeado);
+        comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+        try{
+            EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+            model.addAttribute("equipo", equipo);
+            model.addAttribute("usuario", usuarioService.findById(IdUsuarioLogeado));
+            model.addAttribute("equipoData", new EquipoData());
+        }catch (EquipoServiceException e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+
+        return "formEditarEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String grabaModificacion(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash) {
+
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
+            comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+            try{
+                equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+            }catch (EquipoServiceException e){
+                flash.addFlashAttribute("mensaje", e.getMessage());
+                return "redirect:/equipos";
+            }
+
+            flash.addFlashAttribute("mensaje", "Equipo modificado correctamente");
+            return "redirect:/equipos";
     }
 }
