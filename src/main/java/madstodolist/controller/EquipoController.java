@@ -102,17 +102,20 @@ public class EquipoController {
 
     @GetMapping("equipos/crear")
     public String crearEquipo(Model model) {
+        try{
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
 
-        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-        comprobarUsuarioLogeado(IdUsuarioLogeado);
+            model.addAttribute("logeado", true);
 
-        model.addAttribute("logeado", true);
-        UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
-        model.addAttribute("usuarioPrincipal", usuario);
-        boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
-        model.addAttribute("administrador", administrador);
+            UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+            model.addAttribute("usuarioPrincipal", usuario);
 
-        model.addAttribute("equipoData", new EquipoData());
+            model.addAttribute("equipoData", new EquipoData());
+
+        }catch (UsuarioNoLogeadoException e){
+            return "redirect:/login";
+        }
 
         return "formCrearEquipo";
     }
@@ -120,14 +123,16 @@ public class EquipoController {
     @PostMapping("/equipos/crear")
     public String crearEquipoSubmit(@Valid EquipoData equipoData, BindingResult result, Model model, RedirectAttributes flash) {
 
-        if (result.hasErrors()) {
-            return "formRegistro";
-        }
-
         EquipoData equipo = new EquipoData();
         equipo.setNombre(equipoData.getNombre());
 
-        equipoService.crearEquipo(equipo.getNombre());
+        try{
+            equipoService.crearEquipo(equipo.getNombre());
+        }catch (EquipoServiceException e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+
         flash.addFlashAttribute("mensaje", "Equipo creado correctamente");
         return "redirect:/equipos";
     }
@@ -135,34 +140,36 @@ public class EquipoController {
     @PostMapping("equipos/{id}/añadirUsuario")
     public String añadirUsuarioAEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
 
-        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-        comprobarUsuarioLogeado(IdUsuarioLogeado);
-
         try{
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
             equipoService.añadirUsuarioAEquipo(idEquipo, IdUsuarioLogeado);
-        }catch (Exception e){
+        }catch (EquipoServiceException e){
             flash.addFlashAttribute("mensaje", e.getMessage());
             return "redirect:/equipos";
+        }catch (UsuarioNoLogeadoException e){
+            return "redirect:/login";
         }
-        flash.addFlashAttribute("mensaje", "Te has añadido al equipo correctamente");
 
+        flash.addFlashAttribute("mensaje", "Te has añadido al equipo correctamente");
         return "redirect:/equipos";
     }
 
     @PostMapping("equipos/{id}/eliminarUsuario")
     public String eliminarUsuarioDeEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
 
-        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-        comprobarUsuarioLogeado(IdUsuarioLogeado);
-
         try{
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
             equipoService.eliminarUsuarioDeEquipo(idEquipo, IdUsuarioLogeado);
-        }catch (Exception e){
+        }catch (EquipoServiceException e){
             flash.addFlashAttribute("mensaje", e.getMessage());
             return "redirect:/equipos";
+        }catch (UsuarioNoLogeadoException e){
+            return "redirect:/login";
         }
-        flash.addFlashAttribute("mensaje", "Te has eliminado del equipo correctamente");
 
+        flash.addFlashAttribute("mensaje", "Te has eliminado del equipo correctamente");
         return "redirect:/equipos";
     }
 
@@ -181,17 +188,23 @@ public class EquipoController {
     @GetMapping("/equipos/{id}/editar")
     public String formEditaEquipo(@PathVariable(value="id") Long idEquipo, Model model, RedirectAttributes flash) {
 
-        Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-        comprobarUsuarioLogeado(IdUsuarioLogeado);
-        comprobarUsuarioAdministrador(IdUsuarioLogeado);
-
         try{
+            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+            comprobarUsuarioLogeado(IdUsuarioLogeado);
+            comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
             EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
             model.addAttribute("equipo", equipo);
             model.addAttribute("usuario", usuarioService.findById(IdUsuarioLogeado));
             model.addAttribute("equipoData", new EquipoData());
+
         }catch (EquipoServiceException e){
             flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }catch (UsuarioNoLogeadoException e){
+            return "redirect:/login";
+        }catch (UsuarioNoAdministradorException e){
+            flash.addFlashAttribute("mensaje", "No tienes permisos para editar este equipo");
             return "redirect:/equipos";
         }
 
@@ -201,14 +214,18 @@ public class EquipoController {
     @PostMapping("/equipos/{id}/editar")
     public String grabaModificacion(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData, Model model, RedirectAttributes flash) {
 
-            Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
-            comprobarUsuarioLogeado(IdUsuarioLogeado);
-            comprobarUsuarioAdministrador(IdUsuarioLogeado);
-
             try{
+                Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+                comprobarUsuarioLogeado(IdUsuarioLogeado);
+                comprobarUsuarioAdministrador(IdUsuarioLogeado);
                 equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
             }catch (EquipoServiceException e){
                 flash.addFlashAttribute("mensaje", e.getMessage());
+                return "redirect:/equipos";
+            }catch (UsuarioNoLogeadoException e){
+                return "redirect:/login";
+            }catch (UsuarioNoAdministradorException e){
+                flash.addFlashAttribute("mensaje", "No tienes permisos para editar este equipo");
                 return "redirect:/equipos";
             }
 
