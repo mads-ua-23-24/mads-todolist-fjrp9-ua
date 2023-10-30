@@ -66,7 +66,6 @@ public class EquipoController {
             UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
             model.addAttribute("usuarioPrincipal", usuario);
         }catch (UsuarioNoLogeadoException e){
-            System.out.println("############################################# SALTA EXCEPCION USUARIO NO LOGEADO #############################################");
             return "redirect:/login";
         }
 
@@ -74,22 +73,31 @@ public class EquipoController {
     }
 
     @GetMapping("/equipos/{id}/usuarios")
-    public String listaUsuariosEquipo(Model model, @PathVariable(value="id") Long idEquipo){
+    public String listaUsuariosEquipo(Model model, @PathVariable(value="id") Long idEquipo, RedirectAttributes flash){
 
+        try{
             Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
             comprobarUsuarioLogeado(IdUsuarioLogeado);
 
             List<UsuarioData> usuarios = equipoService.usuariosEquipo(idEquipo);
             model.addAttribute("usuarios", usuarios);
+
             model.addAttribute("logeado", true);
+
             UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
             model.addAttribute("usuarioPrincipal", usuario);
-            boolean administrador = usuarioService.esAdmin(IdUsuarioLogeado);
-            model.addAttribute("administrador", administrador);
+
             EquipoData equipoData = equipoService.recuperarEquipo(idEquipo);
             model.addAttribute("equipo", equipoData);
 
-            return "listaUsuariosEquipo";
+        }catch (UsuarioNoLogeadoException e){
+            return "redirect:/login";
+        }catch (EquipoServiceException e){
+            flash.addFlashAttribute("mensaje", e.getMessage());
+            return "redirect:/equipos";
+        }
+
+        return "listaUsuariosEquipo";
     }
 
     @GetMapping("equipos/crear")
