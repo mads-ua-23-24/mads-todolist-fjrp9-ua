@@ -217,3 +217,29 @@ En este código, se capturan las excepciones **EquipoServiceException**, **Usuar
     </div>
 </div>
 ```
+
+Por último, otro código que me parece interesante es el siguiente:
+
+```html
+<div class="row mt-2">
+    <div class="col">
+        <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(equipos)}">
+            <span>Actualmente no hay equipos registrados.</span>
+        </div>
+    </div>
+</div>
+```
+
+Este código se encuentra en la vista **listaEquipos.html** y muestra un mensaje informativo si no hay equipos registrados. También está el siguiente código:
+
+```html
+<div class="row mt-2">
+    <div class="col">
+        <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(usuarios)}">
+            <span>Actualmente no hay usuarios registrados en este equipo.</span>
+        </div>
+    </div>
+</div>
+```
+
+Este código se encuentra en la vista **listaUsuariosEquipo.html** y muestra un mensaje informativo si no hay usuarios registrados en un equipo.
