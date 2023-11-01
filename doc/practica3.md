@@ -8,3 +8,5 @@ En la primera imagen se puede ver la pantalla de la base de datos PostgreSQL con
 En esta segunda imagen, se puede ver la pantalla de la base de datos PostgreSQL con las tablas creadas y con datos:
 
 ![2.JPG](img%2F2.JPG)
+
+Los datos de la segunda imgen son los que se han ido guardando de una prueba de funcionamiento de la aplicación web.
