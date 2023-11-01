@@ -20,10 +20,10 @@ En cuanto a la capa de servicio, he añadido el método **`eliminarUsuarioDeEqui
 
 En cuanto a la capa de controlador, he añadido cuatro métodos en **EquipoController**:
 
-- **`crearEquipo()`**, con la ruta __`equipos/crear`__ mapeada en un GET. 
-- **`crearEquipoSubmit()`**, con la ruta __`equipos/crear`__ mapeada en un POST.
-- **`añadirUsuarioAEquipo()`**, con la ruta __`equipos/{id}/añadirUsuario`__ mapeada en un POST.
-- **`eliminarUsuarioDeEquipo()`**, con la ruta __`equipos/{id}/eliminarUsuario`__ mapeada en un POST.
+- **`crearEquipo()`**, con la ruta __`equipos/crear`__ mapeada en un **GET**. Este método devuelve la vista **crearEquipo.html** con el formulario para crear equipo.
+- **`crearEquipoSubmit()`**, con la ruta __`equipos/crear`__ mapeada en un **POST**. Este método recibe los datos del formulario en un objeto **EquipoData** y crea el equipo haciendo uso del método **`crearEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **crearEquipo.html** con el mensaje de error.
+- **`añadirUsuarioAEquipo()`**, con la ruta __`equipos/{id}/añadirUsuario`__ mapeada en un **POST**. Este método recibe en la url el id del equipo para añadir al usuario que está logeado y se quiere unir a ese equipo. Para ello, hace uso del método **`añadirUsuarioAEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
+- **`eliminarUsuarioDeEquipo()`**, con la ruta __`equipos/{id}/eliminarUsuario`__ mapeada en un **POST**. ESte método recibe en la url el id del equipo para eliminar al usuario que está logeado y se quiere salir de ese equipo. Para ello, hace uso del método **`eliminarUsuarioDeEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
 
 
 
