@@ -57,7 +57,7 @@ En cuanto a la capa de controlador, he añadido cuatro métodos en **EquipoContr
 
 En cuanto a las vistas, he modificado la vista **listaEquipos.html** para que muestre los botones “Unirse“ de unirse a un equipo y “Salir“ para salir de un equipo. También he añadido el botón "Añadir nuevo Equipo", creando así la vista **formCrearEquipo.html**.
 
-Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test:
+Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test en **EquipoWebTest**:
 
 - Verificar que aparecen todos los botones nuevos (“Añadir nuevo Equipo“, “Unirse“, “Salir“) en Equipo.
 - Verificar que se crea correctamente un equipo y se muestra en el listado.
@@ -149,9 +149,71 @@ En cuanto a las vistas, he añadido la vista **formEditarEquipo.html** y modific
 <td th:if="${usuarioPrincipal.esAdministrador}">
 ```
 
-Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test:
+Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test en **EquipoWebTest**::
 
 - Comprobar que siendo usuario administrador aparezcan los botones de editar y eliminar Equipo.
 - Comprobar que siendo usuario normal no aparezcan los botones de editar y eliminar Equipo.
 - Comprobar que se elimina un equipo correctamente.
 - Comprobar que se modifica un equipo correctamente.
+
+Un ejemplo de test es el siguiete:
+
+```java
+@Test
+public void usuarioAdminLeAparecenLosBotonesEditarBorrarEnListadoEquipo() throws Exception {
+    //GIVEN
+    //Un usuario admin logeado y unos equipos en la BD
+    Long idUsuario = addUsuarioAdminBD();
+    addEquipoBD();
+    when(managerUserSession.usuarioLogeado()).thenReturn(idUsuario);
+    //WHEN, THEN
+    //Accedemos a la lista de equipos
+    this.mockMvc.perform(get("/equipos"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("listaEquipos"))
+            .andExpect(content().string(containsString("Editar")))
+            .andExpect(content().string(containsString("Borrar")));
+
+}
+```
+
+## Fragmentos de código fuente que consideres interesante
+
+Algo que me parece interesante es la captura de excepciones en los métodos de la capa de controlador añadidos de **EquipoController**. Un ejemplo es el siguiente:
+
+```java
+try{
+    Long IdUsuarioLogeado = managerUserSession.usuarioLogeado();
+    comprobarUsuarioLogeado(IdUsuarioLogeado);
+    comprobarUsuarioAdministrador(IdUsuarioLogeado);
+
+    EquipoData equipo = equipoService.recuperarEquipo(idEquipo);
+    model.addAttribute("equipo", equipo);
+    model.addAttribute("usuario", usuarioService.findById(IdUsuarioLogeado));
+    model.addAttribute("equipoData", new EquipoData());
+
+}catch (EquipoServiceException e){
+    flash.addFlashAttribute("mensaje", e.getMessage());
+    return "redirect:/equipos";
+}catch (UsuarioNoLogeadoException e){
+    return "redirect:/login";
+}catch (UsuarioNoAdministradorException e){
+    flash.addFlashAttribute("mensaje", "No tienes permisos para editar este equipo");
+    return "redirect:/equipos";
+}
+```
+
+En este código, se capturan las excepciones **EquipoServiceException**, **UsuarioNoLogeadoException** y **UsuarioNoAdministradorException**. Si salta la primera excepción se redirecciona a __`/equipos`__ con el mensaje de error. Si salta la segunda excepción se redirecciona a __`/login`__. Si salta la tercera excepción se redirecciona a __`/equipos`__ con el mensaje de error "No tienes permisos para editar este equipo". En los casos que se redirecciona a __`/equipos`__ se muestra el mensaje de error en la vista **listaEquipos.html**. Para ellos, se ha implementado el siguiente código:
+
+```html
+ <div class="row mt-2">
+    <div class="col">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
+            <span th:text="${mensaje}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+</div>
+```
