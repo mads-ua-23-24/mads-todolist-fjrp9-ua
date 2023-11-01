@@ -1,6 +1,10 @@
 # PRÁCTICA 3 - MADS - Francisco José Ramírez Paraíso
 ## Pantalla de la base de datos PostgreSQL.
 
+Aquí tenemos el diagrama de la base de datos PostgreSQL:
+
+![0.JPG](img%2F0.JPG)
+
 En la primera imagen se puede ver la pantalla de la base de datos PostgreSQL con las tablas creadas y sin datos:
 
 ![1.JPG](img%2F1.JPG)
@@ -48,8 +52,8 @@ En cuanto a la capa de controlador, he añadido cuatro métodos en **EquipoContr
 
 - **`crearEquipo()`**, con la ruta __`equipos/crear`__ mapeada en un **GET**. Este método devuelve la vista **crearEquipo.html** con el formulario para crear equipo.
 - **`crearEquipoSubmit()`**, con la ruta __`equipos/crear`__ mapeada en un **POST**. Este método recibe los datos del formulario en un objeto **EquipoData** y crea el equipo haciendo uso del método **`crearEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **crearEquipo.html** con el mensaje de error.
-- **`añadirUsuarioAEquipo()`**, con la ruta __`equipos/{id}/añadirUsuario`__ mapeada en un **POST**. Este método recibe en la url el id del equipo para añadir al usuario que está logeado y se quiere unir a ese equipo. Para ello, hace uso del método **`añadirUsuarioAEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
-- **`eliminarUsuarioDeEquipo()`**, con la ruta __`equipos/{id}/eliminarUsuario`__ mapeada en un **POST**. ESte método recibe en la url el id del equipo para eliminar al usuario que está logeado y se quiere salir de ese equipo. Para ello, hace uso del método **`eliminarUsuarioDeEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
+- **`añadirUsuarioAEquipo()`**, con la ruta __`equipos/{id}/añadirUsuario`__ mapeada en un **POST**. Este método recibe en la url el id del equipo para añadir al usuario que está logeado y se quiere unir a ese equipo. Para ello, hace uso del método **`añadirUsuarioAEquipo()`** de **EquipoService**. Si se produce algún error, se redirecciona a __`/equipos`__ con el mensaje de error.
+- **`eliminarUsuarioDeEquipo()`**, con la ruta __`equipos/{id}/eliminarUsuario`__ mapeada en un **POST**. ESte método recibe en la url el id del equipo para eliminar al usuario que está logeado y se quiere salir de ese equipo. Para ello, hace uso del método **`eliminarUsuarioDeEquipo()`** de **EquipoService**. Si se produce algún error, se redirecciona a __`/equipos`__ con el mensaje de error.
 
 En cuanto a las vistas, he modificado la vista **listaEquipos.html** para que muestre los botones “Unirse“ de unirse a un equipo y “Salir“ para salir de un equipo. También he añadido el botón "Añadir nuevo Equipo", creando así la vista **formCrearEquipo.html**.
 
@@ -94,3 +98,60 @@ public void crearEquipoCorrectamente() throws Exception {
 ```
 
 ### 010 Gestión de equipos
+
+En la capa de servicio, se ha añadido el método **`modificarEquipo()`** y **`borraEquipo()`** en **EquipoService**. El primero recibe como parámetro el id del equipo a modificar y el nuevo nombre de ese equipo y modifica el equipo con los nuevos datos. El segundo recibe como parámetro el id del equipo y lo elimina. Para probar estos nuevos métodos he creado cuatro test en **EquipoServiceTest** que dado un equipo, modifica el equipo y verifica su correcta modificación y dado un equipo, lo elimina y verifica su correcta eliminación. Los otros dos son para comprobar que se lanza la excepción **EquipoServiceException** cuando se intenta modificar o eliminar un equipo que no existe.
+
+```java
+@Transactional
+public EquipoData modificarEquipo(Long id, String nombre) {
+    Equipo equipo = equipoRepository.findById(id).orElse(null);
+    if (equipo == null) throw new EquipoServiceException("No existe el equipo con id " + id);
+    else if (nombre == null || nombre.isEmpty())
+        throw new EquipoServiceException("El nombre del equipo no puede estar vacío");
+    equipo.setNombre(nombre);
+    equipo = equipoRepository.save(equipo);
+    return modelMapper.map(equipo, EquipoData.class);
+}
+
+@Transactional
+public void borraEquipo(Long id) {
+    Equipo equipo = equipoRepository.findById(id).orElse(null);
+    if (equipo == null) throw new EquipoServiceException("No existe el equipo con id " + id);
+    equipoRepository.delete(equipo);
+}
+```
+
+En cuanto a la capa de controlador, he añadido tres métodos en **EquipoController**:
+
+- **`eliminarEquipo()`**, con la ruta __`/equipos/{id}`__ mapeada en un **DELETE**. Este método recibe en la url el id del equipo a eliminar y hace uso del método **`borraEquipo()`** de **EquipoService**.
+- **`formEditaEquipo()`**, con la ruta __`/equipos/{id}/editar`__ mapeada en un **GET**. Este método recibe en la url el id del equipo a editar y devuelve la vista **formEditarEquipo.html** con el formulario para editar el equipo.
+- **`grabaModificacion()`**, con la ruta __`/equipos/{id}/editar`__ mapeada en un **POST**. Este método recibe en la url el id del equipo a editar y recibe los datos del formulario en un objeto **EquipoData** y modifica el equipo haciendo uso del método **`modificarEquipo()`** de **EquipoService**. Si se produce algún error, se redirecciona a __`/equipos`__ con el mensaje de error.
+
+Como para acceder a estos métodos se necesitan permisos de administrador, he añadido un método que comprueba si el usuario logeado es administrador o no.
+
+```java
+private void comprobarUsuarioAdministrador(Long idUsuario){
+
+    if(idUsuario != null){
+        boolean esAdmin  = usuarioService.esAdmin(idUsuario);
+        if (!esAdmin){
+            throw new UsuarioNoAdministradorException();
+        }
+    }else{
+        throw new UsuarioNoAdministradorException();
+    }
+}
+```
+
+En cuanto a las vistas, he añadido la vista **formEditarEquipo.html** y modificado la vista **listaEquipos.html** para que muestre los botones “Editar“ y “Eliminar“ de editar y eliminar un equipo. Para que se muestren solo si eres administrador, he usado la equiqueta con el if de Thymeleaf:
+
+```html
+<td th:if="${usuarioPrincipal.esAdministrador}">
+```
+
+Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test:
+
+- Comprobar que siendo usuario administrador aparezcan los botones de editar y eliminar Equipo.
+- Comprobar que siendo usuario normal no aparezcan los botones de editar y eliminar Equipo.
+- Comprobar que se elimina un equipo correctamente.
+- Comprobar que se modifica un equipo correctamente.
