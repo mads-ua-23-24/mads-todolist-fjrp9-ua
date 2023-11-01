@@ -51,8 +51,46 @@ En cuanto a la capa de controlador, he añadido cuatro métodos en **EquipoContr
 - **`añadirUsuarioAEquipo()`**, con la ruta __`equipos/{id}/añadirUsuario`__ mapeada en un **POST**. Este método recibe en la url el id del equipo para añadir al usuario que está logeado y se quiere unir a ese equipo. Para ello, hace uso del método **`añadirUsuarioAEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
 - **`eliminarUsuarioDeEquipo()`**, con la ruta __`equipos/{id}/eliminarUsuario`__ mapeada en un **POST**. ESte método recibe en la url el id del equipo para eliminar al usuario que está logeado y se quiere salir de ese equipo. Para ello, hace uso del método **`eliminarUsuarioDeEquipo()`** de **EquipoService**. Si se produce algún error, se muestra la vista **listaEquipos.html** con el mensaje de error.
 
-Finalemte, he modificado la vista **listaEquipos.html** para que muestre los botones de unirse a un equipo y salir de un equipo. También he añadido el botón de crear equipo, creando así la vista **formCrearEquipo.html**.
+En cuanto a las vistas, he modificado la vista **listaEquipos.html** para que muestre los botones “Unirse“ de unirse a un equipo y “Salir“ para salir de un equipo. También he añadido el botón "Añadir nuevo Equipo", creando así la vista **formCrearEquipo.html**.
 
+Finalmente, la capa de controlador y vistas las he testeado manualmente y con los siguientes test:
 
+- Verificar que aparecen todos los botones nuevos (“Añadir nuevo Equipo“, “Unirse“, “Salir“) en Equipo.
+- Verificar que se crea correctamente un equipo y se muestra en el listado.
+- Verificar que un usuario puede unirse correctamente a un equipo.
+- Verificar que un usuario puede salir correctamente de un equipo.
+- Verificar que un usuario recibe un mensaje de error al intentar unirse a un grupo que ya está unido.
+- Verificar que un usuario recibe un mensaje de error al intentar salirse de un grupo que no está.
+
+Un ejemplo de test es el siguiete:
+
+```java
+@Test
+public void crearEquipoCorrectamente() throws Exception {
+    // GIVEN
+    // Un usuario logeado
+    when(managerUserSession.usuarioLogeado()).thenReturn(addUsuarioBD());
+
+    // WHEN
+    // Creamos un equipo
+    this.mockMvc.perform(post("/equipos/crear")
+            .param("nombre", "EquipoAAA"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/equipos"));
+
+    // THEN
+    // Comprobamos que se ha creado correctamente
+    this.mockMvc.perform(get("/equipos"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("listaEquipos"))
+            .andExpect(model().attributeExists("equipos"))
+            .andExpect(model().attribute("equipos", hasSize(1)))
+            .andExpect(model().attribute("equipos", hasItem(
+                    allOf(
+                            hasProperty("nombre", is("EquipoAAA"))
+                    )
+            )));
+}
+```
 
 ### 010 Gestión de equipos
