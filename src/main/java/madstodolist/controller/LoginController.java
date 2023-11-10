@@ -39,13 +39,13 @@ public class LoginController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute LoginData loginData, Model model, HttpSession session) {
 
-        if(!usuarioService.estaBloqueado(loginData.geteMail())){
-            // Llamada al servicio para comprobar si el login es correcto
-            UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
+        // Llamada al servicio para comprobar si el login es correcto
+        UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
-            if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
-                UsuarioData usuario = usuarioService.findByEmail(loginData.geteMail());
+        if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
+            UsuarioData usuario = usuarioService.findByEmail(loginData.geteMail());
 
+            if(!usuarioService.estaBloqueado(usuario.getEmail())){
                 managerUserSession.logearUsuario(usuario.getId());
 
                 if(usuario.getEsAdministrador()){
@@ -53,17 +53,18 @@ public class LoginController {
                 }else{
                     return "redirect:/usuarios/" + usuario.getId() + "/tareas";
                 }
-            } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
-                model.addAttribute("error", "No existe usuario");
-                return "formLogin";
-            } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
-                model.addAttribute("error", "Contraseña incorrecta");
-                return "formLogin";
             }
+
+            model.addAttribute("error", "Estás bloqueado, no puede acceder al sistema");
+            return "formLogin";
+
+        } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
+            model.addAttribute("error", "No existe usuario");
+            return "formLogin";
+        } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
+            model.addAttribute("error", "Contraseña incorrecta");
             return "formLogin";
         }
-
-        model.addAttribute("error", "Estás bloqueado, no puede acceder al sistema");
         return "formLogin";
     }
 
